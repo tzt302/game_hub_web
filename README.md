@@ -7,7 +7,7 @@
 
 - 雀研所：已提供完整浏览器版本。
 - Racing Line Pro：桌面版已经发布，浏览器版本开发中。
-- Neon Hold'em：桌面版已经发布，浏览器版本开发中。
+- Neon Hold'em：已提供完整浏览器版本。
 
 ## Cloudflare Pages 配置
 
