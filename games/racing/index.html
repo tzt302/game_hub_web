@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#080b10">
-  <meta name="description" content="Racing Line Pro 2.5 网页版方程式赛车游戏">
+  <meta name="description" content="Racing Line Pro 2.6 网页版方程式赛车游戏">
   <title>Racing Line Pro · Web Edition</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -14,7 +14,7 @@
     <header class="topbar">
       <a class="back-link" href="../../" aria-label="返回游戏大厅">← 游戏大厅</a>
       <div class="wordmark"><i></i><span>RACING LINE</span><b>PRO</b></div>
-      <div class="version">WEB · 2.5</div>
+      <div class="version">WEB · 2.6</div>
     </header>
 
     <section id="stage" class="stage" aria-label="Racing Line Pro 游戏画面">
@@ -36,7 +36,7 @@
           <label>视野<select id="viewSelect"><option value="3.2">近</option><option value="2.55" selected>标准</option><option value="2.0">宽</option></select></label>
           <label>涂装<select id="liverySelect"><option value="scarlet">SCARLET</option><option value="papaya">PAPAYA</option><option value="silver">SILVER</option><option value="blue">ROYAL BLUE</option></select></label>
           <button id="startButton" class="primary" type="submit">进入赛道 <span>→</span></button>
-          <p class="setup-note">键盘 W/S/A/D 或方向键 · R 重置 · P 暂停</p>
+          <p class="setup-note">键盘 W/S/A/D · 手柄摇杆与扳机 · R / A 复位 · P / START 暂停</p>
         </form>
       </section>
 
@@ -70,10 +70,11 @@
       <section id="pauseScreen" class="screen pause-screen hidden"><div><p class="eyebrow">SESSION PAUSED</p><h2>比赛暂停</h2><button id="resumeButton" class="primary">继续</button><button id="restartButton">重新开始</button><button id="menuButton">返回菜单</button></div></section>
 
       <div id="startLights" class="start-lights hidden"><div><i></i><i></i><i></i><i></i><i></i></div><span>HOLD THE BRAKE</span></div>
+      <div id="recoveryCountdown" class="recovery-countdown hidden" aria-live="assertive"><small>回到 3 秒前</small><strong>3</strong><span>车辆复位中</span></div>
 
       <div class="touch-controls" aria-label="触屏控制">
         <div><button data-control="left">←</button><button data-control="right">→</button></div>
-        <div><button class="brake" data-control="brake">BRAKE</button><button class="throttle" data-control="throttle">THROTTLE</button></div>
+        <div><button class="reset" data-recover>RESET</button><button class="brake" data-control="brake">BRAKE</button><button class="throttle" data-control="throttle">THROTTLE</button></div>
       </div>
     </section>
   </main>
