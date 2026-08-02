@@ -6,7 +6,7 @@
 ## 当前游戏
 
 - 雀研所：已提供完整浏览器版本。
-- Racing Line Pro：已提供基于桌面版 2.5 的完整浏览器版本。
+- Racing Line Pro：网页 2.6 版已支持手柄、触屏操作和三秒回溯复位。
 - Neon Hold'em：已提供完整浏览器版本。
 
 ## Cloudflare Pages 配置

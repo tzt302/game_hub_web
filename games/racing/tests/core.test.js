@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { Vehicle } from '../src/physics.js';
 import { buildTrack, nearestIndex } from '../src/track.js';
 import { AIDriver } from '../src/ai.js';
+import { normalizedTrigger, readGamepad, recoverySnapshot } from '../src/controls.js';
 
 const realTrackData = JSON.parse(readFileSync(new URL('../assets/telemetry_layouts.json', import.meta.url), 'utf8'));
 
@@ -61,4 +62,23 @@ test('all five 2.5 telemetry circuits build for the browser', () => {
     assert.ok(track.brakeZones.length > 3, id);
     assert.equal(track.sectorIndices.length, 2, id);
   }
+});
+
+test('gamepad controls support standard triggers and A-button recovery', () => {
+  const buttons = Array.from({ length: 10 }, () => ({ value: 0, pressed: false }));
+  buttons[7] = { value: .82, pressed: true };
+  buttons[6] = { value: .35, pressed: true };
+  buttons[0] = { value: 1, pressed: true };
+  const controls = readGamepad({ mapping: 'standard', axes: [.5], buttons });
+  assert.ok(controls.steer > .4);
+  assert.equal(controls.throttle, .82);
+  assert.equal(controls.brake, .35);
+  assert.equal(controls.reset, true);
+  assert.equal(normalizedTrigger(0, 1), 1);
+});
+
+test('recovery selects the position from three seconds earlier', () => {
+  const history = [0,1,2,3,4,5].map(time => ({ time, x:time * 10 }));
+  assert.equal(recoverySnapshot(history, 5.4, 3).x, 20);
+  assert.equal(recoverySnapshot([], 5.4, 3), null);
 });

@@ -1,6 +1,7 @@
 import { loadTracks, TRACK_ORDER, nearestIndex, progressScore } from './track.js';
 import { Vehicle, PHYSICS } from './physics.js';
 import { AIDriver, AI_PROFILES } from './ai.js';
+import { readGamepad, recoverySnapshot } from './controls.js';
 
 if (new URLSearchParams(window.location.search).has('embed')) document.body.classList.add('embed');
 
@@ -12,7 +13,7 @@ const ui = {
   track: $('#trackSelect'), mode: $('#modeSelect'), difficulty: $('#difficultySelect'), view: $('#viewSelect'), livery: $('#liverySelect'),
   lap: $('#lapLabel'), time: $('#lapTime'), speed: $('#speedLabel'), gear: $('#gearLabel'), position: $('#positionLabel'),
   delta: $('#delta'), leaderboard: $('#leaderboard'), notice: $('#notice'), modeLabel: $('#modeLabel'),
-  throttle: $('#throttleBar'), brake: $('#brakeBar'), sectors: [$('#sector1'), $('#sector2'), $('#sector3')]
+  throttle: $('#throttleBar'), brake: $('#brakeBar'), recovery: $('#recoveryCountdown'), sectors: [$('#sector1'), $('#sector2'), $('#sector3')]
 };
 const LIVERIES = { scarlet:['#e32f3d','#ffd34e'], papaya:['#f57a20','#27394b'], silver:['#2dbbab','#f1f3f4'], blue:['#3157d5','#ef3745'] };
 const input = { left:false, right:false, throttle:false, brake:false };
@@ -20,7 +21,8 @@ const state = {
   phase:'loading', tracks:null, track:null, player:null, ai:[], mode:'time', difficulty:'normal', viewScale:2.55,
   livery:'scarlet', showLine:true, lap:1, totalLaps:3, lapTime:0, lastIndex:0, sector:0, sectorTimes:[null,null,null],
   currentTrace:[], bestTrace:null, bestLap:Infinity, delta:null, countdown:0, lightsOut:true, lastFrame:0,
-  outside:false, warnings:0, penalty:0, noticeTimer:0, wrongWay:0, lapValid:true, gamepadReset:false
+  outside:false, warnings:0, penalty:0, noticeTimer:0, wrongWay:0, lapValid:true, gamepadReset:false, gamepadPause:false,
+  raceClock:0, recoveryHistory:[], recoverySampleTimer:0, recovery:null
 };
 
 function resizeCanvas() {
@@ -63,7 +65,8 @@ function resetSession() {
     const point = state.track.points[0]; state.player.reset(point.x, point.y, point.heading); state.player.trackIndex = 0; state.lastIndex = 0;
     state.ai.forEach((car,index) => placeCar(car,index)); state.lightsOut = true;
   }
-  Object.assign(state,{lap:1,totalLaps:state.track.laps,lapTime:0,sector:0,sectorTimes:[null,null,null],currentTrace:new Array(state.track.points.length).fill(null),bestTrace:null,bestLap:Infinity,delta:null,outside:false,warnings:0,penalty:0,wrongWay:0,lapValid:true});
+  Object.assign(state,{lap:1,totalLaps:state.track.laps,lapTime:0,sector:0,sectorTimes:[null,null,null],currentTrace:new Array(state.track.points.length).fill(null),bestTrace:null,bestLap:Infinity,delta:null,outside:false,warnings:0,penalty:0,wrongWay:0,lapValid:true,raceClock:0,recoveryHistory:[],recoverySampleTimer:0,recovery:null});
+  ui.recovery.classList.add('hidden');
   ui.lights.classList.toggle('hidden', state.lightsOut); updateHud();
 }
 
@@ -86,7 +89,7 @@ const keyMap = { KeyA:'left',ArrowLeft:'left',KeyD:'right',ArrowRight:'right',Ke
 window.addEventListener('keydown', event => {
   if (keyMap[event.code]) { input[keyMap[event.code]] = true; event.preventDefault(); }
   if (event.code === 'KeyP' || event.code === 'Escape') togglePause(state.phase === 'race');
-  if (event.code === 'KeyR' && state.phase === 'race') recoverPlayer();
+  if (event.code === 'KeyR' && state.phase === 'race') requestRecovery();
   if (event.code === 'KeyL' && state.phase === 'race') state.showLine = !state.showLine;
 });
 window.addEventListener('keyup', event => { if (keyMap[event.code]) { input[keyMap[event.code]] = false; event.preventDefault(); } });
@@ -96,19 +99,75 @@ document.querySelectorAll('[data-control]').forEach(button => {
   button.addEventListener('pointerdown', event => { event.preventDefault(); button.setPointerCapture(event.pointerId); set(true); });
   ['pointerup','pointercancel','lostpointercapture'].forEach(type => button.addEventListener(type, () => set(false)));
 });
+document.querySelector('[data-recover]').addEventListener('pointerdown', event => { event.preventDefault(); requestRecovery(); });
+document.querySelectorAll('.touch-controls button').forEach(button => {
+  ['contextmenu','selectstart','dragstart'].forEach(type => button.addEventListener(type, event => event.preventDefault()));
+});
 
 function recoverPlayer(message = '车辆已重置') {
   const point = state.track.points[state.player.trackIndex]; state.player.reset(point.x, point.y, point.heading); state.player.trackIndex = state.lastIndex = state.player.trackIndex; setNotice(message);
 }
 
+function recordRecoverySnapshot(dt) {
+  state.raceClock += dt;
+  state.recoverySampleTimer += dt;
+  if (state.recoverySampleTimer < .1) return;
+  state.recoverySampleTimer = 0;
+  const player = state.player;
+  state.recoveryHistory.push({ time:state.raceClock, x:player.x, y:player.y, heading:player.heading, speed:player.speed, trackIndex:player.trackIndex });
+  while (state.recoveryHistory.length && state.recoveryHistory[0].time < state.raceClock - 6) state.recoveryHistory.shift();
+}
+
+function requestRecovery() {
+  if (state.phase !== 'race' || state.recovery || !state.player || !state.track) return;
+  const saved = recoverySnapshot(state.recoveryHistory, state.raceClock, 3);
+  const point = state.track.points[state.player.trackIndex];
+  state.recovery = { remaining:3, shown:3, target:saved || { x:point.x, y:point.y, heading:point.heading, speed:0, trackIndex:state.player.trackIndex } };
+  Object.keys(input).forEach(key => { input[key] = false; });
+  ui.recovery.querySelector('strong').textContent = '3';
+  ui.recovery.classList.remove('hidden');
+}
+
+function updateRecovery(dt) {
+  if (!state.recovery) return false;
+  state.recovery.remaining -= dt;
+  const shown = Math.max(1, Math.ceil(state.recovery.remaining));
+  if (shown !== state.recovery.shown) {
+    state.recovery.shown = shown;
+    const label = ui.recovery.querySelector('strong');
+    label.textContent = String(shown);
+    label.style.animation = 'none'; void label.offsetWidth; label.style.animation = '';
+  }
+  if (state.recovery.remaining > 0) return true;
+  const target = state.recovery.target;
+  state.player.reset(target.x, target.y, target.heading);
+  state.player.speed = Math.max(0, target.speed || 0);
+  state.player.trackIndex = target.trackIndex;
+  state.lastIndex = target.trackIndex;
+  state.lapValid = false; state.delta = null; state.currentTrace.fill(null); state.outside = false; state.wrongWay = 0;
+  state.recovery = null; ui.recovery.classList.add('hidden'); setNotice('已回到 3 秒前 · 本圈无效');
+  return true;
+}
+
+function activeGamepad() { return Array.from(navigator.getGamepads?.() || []).find(Boolean); }
+
+function handleGamepadButtons() {
+  const controls = readGamepad(activeGamepad());
+  if (controls.reset && !state.gamepadReset && state.phase === 'race') requestRecovery();
+  if (controls.pause && !state.gamepadPause && ['race','paused'].includes(state.phase)) togglePause(state.phase === 'race');
+  state.gamepadReset = controls.reset; state.gamepadPause = controls.pause;
+}
+
 function readControls() {
   let steer=(input.right?1:0)-(input.left?1:0),throttle=input.throttle?1:0,brake=input.brake?1:0;
-  const pad=Array.from(navigator.getGamepads?.()||[]).find(Boolean);
-  if(pad){const axis=pad.axes[0]||0,deadzone=.12;if(Math.abs(axis)>deadzone)steer=(Math.abs(axis)-deadzone)/(1-deadzone)*Math.sign(axis);throttle=Math.max(throttle,pad.buttons[7]?.value||0);brake=Math.max(brake,pad.buttons[6]?.value||0);const reset=Boolean(pad.buttons[1]?.pressed);if(reset&&!state.gamepadReset)recoverPlayer();state.gamepadReset=reset;}
+  const gamepad = readGamepad(activeGamepad());
+  if (gamepad.steer) steer = gamepad.steer;
+  throttle = Math.max(throttle, gamepad.throttle); brake = Math.max(brake, gamepad.brake);
   return{steer,throttle,brake};
 }
 
 function updateRace(dt) {
+  if (updateRecovery(dt)) return;
   if (!state.lightsOut) {
     state.countdown += dt; const lit = state.countdown < .75 ? 0 : Math.min(5, Math.floor((state.countdown - .75) / .75) + 1);
     [...ui.lights.querySelectorAll('i')].forEach((light,index) => light.classList.toggle('on', index < lit));
@@ -122,6 +181,7 @@ function updateRace(dt) {
     state.ai.forEach(car => { surfaceFor(car); car.drive(dt, allCars); surfaceFor(car); updateAiLap(car); });
   }
   state.lapTime += dt; state.currentTrace[state.player.trackIndex] = state.lapTime;
+  recordRecoverySnapshot(dt);
   updateDirection(dt); updateTrackLimits(); updateTiming(nearest.index); updateContacts();
   if (state.noticeTimer > 0) { state.noticeTimer -= dt; if (state.noticeTimer <= 0) ui.notice.classList.add('hidden'); }
   updateHud();
@@ -228,7 +288,7 @@ function drawMinimap(width,height){
 }
 
 function frame(timestamp){
-  const dt=Math.min(.033,Math.max(0,(timestamp-state.lastFrame)/1000||0));state.lastFrame=timestamp;if(state.phase==='race')updateRace(dt);draw();requestAnimationFrame(frame);
+  const dt=Math.min(.033,Math.max(0,(timestamp-state.lastFrame)/1000||0));state.lastFrame=timestamp;handleGamepadButtons();if(state.phase==='race')updateRace(dt);draw();requestAnimationFrame(frame);
 }
 
 async function initialize(){
