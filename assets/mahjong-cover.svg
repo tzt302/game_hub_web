@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#102d29"/><stop offset="1" stop-color="#07110f"/></linearGradient>
+    <radialGradient id="glow"><stop stop-color="#e5c96c" stop-opacity=".32"/><stop offset="1" stop-color="#e5c96c" stop-opacity="0"/></radialGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="22" stdDeviation="24" flood-opacity=".45"/></filter>
+  </defs>
+  <rect width="1200" height="760" fill="url(#bg)"/>
+  <circle cx="850" cy="180" r="430" fill="url(#glow)"/>
+  <g opacity=".1" stroke="#d5bd6a" fill="none"><circle cx="1040" cy="110" r="310"/><circle cx="1040" cy="110" r="270"/><path d="M0 630L1200 230M0 720L1200 320"/></g>
+  <g filter="url(#shadow)" transform="translate(692 88) rotate(9)">
+    <rect width="300" height="420" rx="32" fill="#eee9db"/>
+    <rect x="17" y="17" width="266" height="386" rx="22" fill="#faf7ed" stroke="#c9c3b5" stroke-width="4"/>
+    <text x="150" y="277" text-anchor="middle" font-size="220" font-family="serif" font-weight="700" fill="#b4252b">中</text>
+  </g>
+  <text x="80" y="160" fill="#e5c96c" font-family="sans-serif" font-size="24" font-weight="700" letter-spacing="7">RIICHI MAHJONG</text>
+  <text x="72" y="285" fill="#f3f0e9" font-family="sans-serif" font-size="100" font-weight="800">雀研所</text>
+  <text x="80" y="345" fill="#9eb1ab" font-family="sans-serif" font-size="25" letter-spacing="8">MAHJONG LAB</text>
+  <text x="80" y="640" fill="#9eb1ab" font-family="sans-serif" font-size="25">读牌 · 决策 · 精进</text>
+</svg>
