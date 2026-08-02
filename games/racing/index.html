@@ -1,10 +1,82 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Racing Line Pro · 网页版制作中</title>
-  <link rel="stylesheet" href="../../styles.css">
-  <style>.coming{min-height:100vh;padding:40px clamp(24px,8vw,120px);display:flex;flex-direction:column;justify-content:center;background:radial-gradient(circle at 75% 30%,rgba(255,93,59,.13),transparent 30rem)}.coming h1{font-size:clamp(50px,9vw,120px)}.coming p{max-width:650px;color:var(--muted);line-height:1.8}.coming nav{margin-top:35px;display:flex;gap:12px;flex-wrap:wrap}.coming a{padding:12px 17px;border:1px solid var(--line);border-radius:999px;text-decoration:none}</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b10">
+  <meta name="description" content="Racing Line Pro 2.5 网页版方程式赛车游戏">
+  <title>Racing Line Pro · Web Edition</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
 </head>
-<body><main class="coming"><p class="eyebrow">WEB EDITION IN DEVELOPMENT</p><h1>Racing Line<br>Pro</h1><p>桌面版已经可以游玩，浏览器版本正在适配操控、音频与赛道资源。完成后会直接出现在这里，不需要重新下载。</p><nav><a href="../../">← 返回大厅</a><a href="https://github.com/tzt302/game_racing">查看源代码 ↗</a></nav></main></body>
+<body>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="back-link" href="../../" aria-label="返回游戏大厅">← 游戏大厅</a>
+      <div class="wordmark"><i></i><span>RACING LINE</span><b>PRO</b></div>
+      <div class="version">WEB · 2.5</div>
+    </header>
+
+    <section id="stage" class="stage" aria-label="Racing Line Pro 游戏画面">
+      <canvas id="gameCanvas" width="1280" height="720" tabindex="0"></canvas>
+      <div class="scanlines" aria-hidden="true"></div>
+
+      <section id="menuScreen" class="screen menu-screen">
+        <div class="menu-copy">
+          <p class="eyebrow">FORMULA RACING · WEB EDITION</p>
+          <h1>Racing<br><em>Line</em> Pro</h1>
+          <p>以 2.5 桌面版为基线，保留五条真实赛道、赛车线、刹车提示、计时赛与十车正赛。</p>
+          <div class="feature-row"><span>5 CIRCUITS</span><span>10 CARS</span><span>NO INSTALL</span></div>
+        </div>
+        <form id="raceSetup" class="setup-panel">
+          <div class="setup-heading"><span>SESSION SETUP</span><small>比赛设置</small></div>
+          <label>赛道<select id="trackSelect"></select></label>
+          <label>模式<select id="modeSelect"><option value="time">计时赛</option><option value="race">正赛 · 10 辆车</option></select></label>
+          <label>AI 难度<select id="difficultySelect"><option value="easy">EASY</option><option value="normal" selected>NORMAL</option><option value="hard">HARD</option></select></label>
+          <label>视野<select id="viewSelect"><option value="3.2">近</option><option value="2.55" selected>标准</option><option value="2.0">宽</option></select></label>
+          <label>涂装<select id="liverySelect"><option value="scarlet">SCARLET</option><option value="papaya">PAPAYA</option><option value="silver">SILVER</option><option value="blue">ROYAL BLUE</option></select></label>
+          <button id="startButton" class="primary" type="submit">进入赛道 <span>→</span></button>
+          <p class="setup-note">键盘 W/S/A/D 或方向键 · R 重置 · P 暂停</p>
+        </form>
+      </section>
+
+      <section id="guideScreen" class="screen guide-screen hidden">
+        <div class="guide-card">
+          <p class="eyebrow">DRIVER BRIEFING</p><h2>出发前，记住四件事</h2>
+          <div class="guide-grid">
+            <article><b>01</b><h3>平顺输入</h3><p>高速时转向锁自动减小。先制动，再逐渐转向。</p></article>
+            <article><b>02</b><h3>读取赛车线</h3><p><i class="cyan"></i>全油门　<i class="amber"></i>收油　<i class="red"></i>制动</p></article>
+            <article><b>03</b><h3>利用路肩</h3><p>红白路肩可以使用，但驶出赛道会删除圈速或累计警告。</p></article>
+            <article><b>04</b><h3>建立 Delta</h3><p>完成一个有效圈后，实时比较自己的个人最快圈。</p></article>
+          </div>
+          <button id="driveButton" class="primary">开始驾驶 <span>→</span></button>
+        </div>
+      </section>
+
+      <div id="hud" class="hud hidden">
+        <div class="timing-tower"><header><span>POS</span><b id="positionLabel">1 / 10</b></header><ol id="leaderboard"></ol></div>
+        <div class="lap-panel"><small id="modeLabel">TIME TRIAL</small><strong id="lapLabel">LAP 1 / 3</strong><span id="lapTime">0:00.000</span></div>
+        <div id="delta" class="delta neutral"><small>DELTA · PERSONAL BEST</small><strong>--.---</strong></div>
+        <div class="telemetry">
+          <div class="gear"><small>GEAR</small><strong id="gearLabel">1</strong></div>
+          <div class="speed"><strong id="speedLabel">000</strong><small>KM/H</small></div>
+          <div class="pedals"><i id="throttleBar"></i><i id="brakeBar"></i></div>
+        </div>
+        <div class="sectors"><span>S1 <b id="sector1">--.---</b></span><span>S2 <b id="sector2">--.---</b></span><span>S3 <b id="sector3">--.---</b></span></div>
+        <div id="notice" class="notice hidden"></div>
+        <div class="hud-actions"><button id="lineButton" title="切换赛车线">LINE</button><button id="pauseButton">PAUSE</button></div>
+      </div>
+
+      <section id="pauseScreen" class="screen pause-screen hidden"><div><p class="eyebrow">SESSION PAUSED</p><h2>比赛暂停</h2><button id="resumeButton" class="primary">继续</button><button id="restartButton">重新开始</button><button id="menuButton">返回菜单</button></div></section>
+
+      <div id="startLights" class="start-lights hidden"><div><i></i><i></i><i></i><i></i><i></i></div><span>HOLD THE BRAKE</span></div>
+
+      <div class="touch-controls" aria-label="触屏控制">
+        <div><button data-control="left">←</button><button data-control="right">→</button></div>
+        <div><button class="brake" data-control="brake">BRAKE</button><button class="throttle" data-control="throttle">THROTTLE</button></div>
+      </div>
+    </section>
+  </main>
+  <script type="module" src="src/game.js"></script>
+</body>
 </html>
