@@ -19,6 +19,8 @@ button { font: inherit; }
 .ambient-b { width: 420px; height: 420px; background: #277d67; left: -160px; bottom: -160px; }
 .app-shell { min-height: 100vh; position: relative; z-index: 1; }
 .topbar { height: 82px; display: flex; align-items: center; justify-content: space-between; padding: 0 4vw; border-bottom: 1px solid var(--line); background: rgba(5, 17, 14, .55); backdrop-filter: blur(18px); }
+.lobby-link { height: 40px; padding: 0 14px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; flex: 0 0 auto; color: var(--muted); border: 1px solid var(--line); border-radius: 8px; background: rgba(255,255,255,.03); text-decoration: none; font-size: 12px; font-weight: 700; transition: color .2s, border-color .2s, background .2s; }
+.lobby-link:hover { color: var(--gold-soft); border-color: rgba(211,170,85,.45); background: rgba(211,170,85,.08); }
 .brand { display: flex; align-items: center; gap: 12px; }
 .brand-mark { width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid rgba(211,170,85,.45); color: var(--gold-soft); font-family: serif; font-size: 24px; transform: rotate(3deg); }
 .brand h1 { margin: 0; font-family: serif; font-size: 21px; letter-spacing: .18em; }
@@ -153,6 +155,8 @@ button { font: inherit; }
 }
 @media (max-width: 560px) {
   .topbar { padding: 0 15px; }
+  .lobby-link { width: 40px; padding: 0; }
+  .lobby-link span { display: none; }
   .start-screen { padding: 35px 0; }
   .setup-card { padding: 22px; }
   .hero-copy h2 { font-size: 38px; }
