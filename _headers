@@ -7,6 +7,12 @@
 /games/mahjong/*
   Cache-Control: public, max-age=0, must-revalidate
 
+/games/poker/*
+  Cache-Control: public, max-age=0, must-revalidate
+
+/_next/*
+  Cache-Control: public, max-age=31536000, immutable
+
 /assets/*
   Cache-Control: public, max-age=86400
 
