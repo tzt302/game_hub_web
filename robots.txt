@@ -1,0 +1,8 @@
+﻿Sitemap: https://tztgame.com/sitemap.xml
+
+User-agent: *
+Allow: /
+Disallow: /_next/
+
+User-agent: GPTBot
+Disallow: /
