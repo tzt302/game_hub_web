@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#25d7cc">
+  <title>蜘蛛纸牌 · TZT 游戏</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="cartoon-bg" aria-hidden="true"><i></i><i></i><i></i></div>
+  <main class="game-shell">
+    <header class="topbar">
+      <a class="brand" href="../../" aria-label="返回游戏大厅">
+        <span class="brand-mark">♠</span>
+        <div><p>经典纸牌游戏</p><h1>蜘蛛纸牌</h1></div>
+      </a>
+      <div class="difficulty" role="group" aria-label="选择难度">
+        <button class="level active" data-level="easy"><b>简单</b><small>单花色</small></button>
+        <button class="level" data-level="medium"><b>中等</b><small>双花色</small></button>
+        <button class="level" data-level="hard"><b>困难</b><small>四花色</small></button>
+      </div>
+      <div class="toolbar">
+        <button id="dailyButton" class="daily-button" title="每日固定牌局">☀ <span>每日挑战</span></button>
+        <button id="newGame" class="soft-button" title="重新开始">↻ <span>新游戏</span></button>
+        <button id="hintButton" class="hint-button" title="无限次数提示">✦ <span>提示</span><small>无限</small></button>
+      </div>
+    </header>
+
+    <section class="status-strip" aria-live="polite">
+      <div><span>难度</span><strong id="difficultyLabel">简单 · 单花色</strong></div>
+      <div><span>步数</span><strong id="moveCount">0</strong></div>
+      <div><span>已完成</span><strong><b id="completedCount">0</b> / 8</strong></div>
+      <div><span>本局用时</span><strong id="elapsedTime">00:00</strong></div>
+      <p id="message">把同花色的 K 到 A 连成完整序列</p>
+    </section>
+
+    <section class="table-panel">
+      <div class="felt-mark" aria-hidden="true"><span>♠</span><b>SPIDER</b></div>
+      <div id="tableau" class="tableau" aria-label="蜘蛛纸牌牌桌"></div>
+      <div class="table-footer">
+        <div class="completed-runs" id="completedRuns" aria-label="已完成牌组"></div>
+        <button id="stockButton" class="stock" aria-label="发下一排牌">
+          <span class="stock-stack"><i></i><i></i><i></i></span>
+          <b id="stockCount">5</b>
+          <small>点击发牌</small>
+        </button>
+      </div>
+    </section>
+    <aside class="quick-rule"><b>玩法</b><span>牌点递减即可叠放，同花色连续牌组可以整体移动；空列可放任意牌。</span></aside>
+    <section class="daily-leaderboard" aria-label="每日挑战速度排行榜">
+      <header><div><small>DAILY CHALLENGE</small><h2>每日挑战排行榜</h2></div><span id="dailyStatus">今日尚未完成</span></header>
+      <ol id="dailyRecords"><li class="empty-daily">完成每日挑战后，这里会记录你的完成速度</li></ol>
+    </section>
+  </main>
+
+  <div id="dialog" class="dialog" hidden>
+    <div class="dialog-card">
+      <span class="win-spider">✦</span>
+      <small>挑战完成</small>
+      <h2>漂亮的一局！</h2>
+      <p id="winSummary"></p>
+      <button id="playAgain">再来一局</button>
+    </div>
+  </div>
+  <script type="module" src="src/game.js"></script>
+</body>
+</html>

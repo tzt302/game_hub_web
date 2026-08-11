@@ -59,6 +59,28 @@
     }
   };
 
+  const spiderTranslations = {
+    en:{title:'Spider Solitaire',cardCategory:'CARDS · STRATEGY',summary:'Three levels and daily challenges',description:'Classic Spider Solitaire with one-, two- and four-suit difficulty, unlimited hints and a daily speed leaderboard.',features:['3 standard levels','Unlimited hints','Daily leaderboard'],search:'spider solitaire cards strategy daily',alt:'Cartoon Spider Solitaire game cover'},
+    ja:{title:'スパイダーソリティア',cardCategory:'カード · 戦略',summary:'3段階の難易度とデイリー',description:'1・2・4スートの難易度、無制限ヒント、デイリータイムランキングを備えた定番スパイダーソリティア。',features:['3段階の難易度','無制限ヒント','デイリーランキング'],search:'スパイダー ソリティア カード 戦略',alt:'スパイダーソリティアのカートゥーンカバー'},
+    fr:{title:'Spider Solitaire',cardCategory:'CARTES · STRATÉGIE',summary:'Trois niveaux et défi quotidien',description:'Spider Solitaire classique avec un, deux ou quatre symboles, indices illimités et classement quotidien.',features:['3 niveaux','Indices illimités','Classement quotidien'],search:'spider solitaire cartes stratégie quotidien',alt:'Couverture cartoon de Spider Solitaire'},
+    es:{title:'Solitario Spider',cardCategory:'CARTAS · ESTRATEGIA',summary:'Tres niveles y reto diario',description:'Solitario Spider clásico con uno, dos o cuatro palos, pistas ilimitadas y clasificación diaria.',features:['3 niveles','Pistas ilimitadas','Clasificación diaria'],search:'solitario spider cartas estrategia diario',alt:'Portada cartoon de Solitario Spider'},
+    ru:{title:'Паук',cardCategory:'КАРТЫ · СТРАТЕГИЯ',summary:'Три уровня и ежедневный турнир',description:'Классический пасьянс Паук: одна, две или четыре масти, бесконечные подсказки и ежедневный рейтинг.',features:['3 уровня','Подсказки без лимита','Ежедневный рейтинг'],search:'пасьянс паук карты стратегия',alt:'Обложка пасьянса Паук'},
+    it:{title:'Solitario Spider',cardCategory:'CARTE · STRATEGIA',summary:'Tre livelli e sfida giornaliera',description:'Solitario Spider classico con uno, due o quattro semi, suggerimenti illimitati e classifica giornaliera.',features:['3 livelli','Suggerimenti illimitati','Classifica giornaliera'],search:'solitario spider carte strategia',alt:'Copertina cartoon di Solitario Spider'},
+    ar:{title:'سوليتير العنكبوت',cardCategory:'بطاقات · استراتيجية',summary:'ثلاثة مستويات وتحد يومي',description:'سوليتير العنكبوت الكلاسيكي بصعوبة لون أو لونين أو أربعة، وتلميحات غير محدودة وترتيب يومي.',features:['3 مستويات','تلميحات بلا حدود','ترتيب يومي'],search:'سوليتير العنكبوت بطاقات استراتيجية',alt:'غلاف كرتوني لسوليتير العنكبوت'},
+    ko:{title:'스파이더 카드놀이',cardCategory:'카드 · 전략',summary:'3단계 난이도와 일일 도전',description:'1·2·4 슈트 난이도, 무제한 힌트, 일일 기록 순위를 갖춘 클래식 스파이더 카드놀이입니다.',features:['3단계 난이도','무제한 힌트','일일 순위'],search:'스파이더 카드놀이 솔리테어 전략',alt:'스파이더 카드놀이 카툰 표지'},
+    'zh-CN':{title:'蜘蛛纸牌',cardCategory:'纸牌 · 策略',summary:'三档难度与每日挑战',description:'经典蜘蛛纸牌，提供单花色、双花色和四花色三档难度，并支持无限提示与每日挑战排行榜。',features:['三档标准难度','无限次数提示','每日挑战排行榜'],search:'蜘蛛纸牌 纸牌 接龙 策略',alt:'蜘蛛纸牌卡通游戏封面'},
+    'zh-TW':{title:'蜘蛛紙牌',cardCategory:'紙牌 · 策略',summary:'三種難度與每日挑戰',description:'經典蜘蛛紙牌，提供單花色、雙花色和四花色三種難度，並支援無限提示與每日挑戰排行榜。',features:['三種標準難度','無限次提示','每日挑戰排行榜'],search:'蜘蛛紙牌 紙牌 接龍 策略',alt:'蜘蛛紙牌卡通遊戲封面'},
+    pt:{title:'Paciência Spider',cardCategory:'CARTAS · ESTRATÉGIA',summary:'Três níveis e desafio diário',description:'Paciência Spider clássica com um, dois ou quatro naipes, dicas ilimitadas e ranking diário.',features:['3 níveis','Dicas ilimitadas','Ranking diário'],search:'paciência spider cartas estratégia',alt:'Capa cartoon de Paciência Spider'}
+  };
+
+  const availabilityTranslations = {
+    en:['4 games online','8 reserved slots'],ja:['4本公開中','予約枠8個'],fr:['4 jeux en ligne','8 places réservées'],es:['4 juegos online','8 espacios reservados'],ru:['4 игры онлайн','8 свободных мест'],it:['4 giochi online','8 spazi riservati'],ar:['4 ألعاب متاحة','8 خانات محجوزة'],ko:['게임 4개 공개','예약 슬롯 8개'],'zh-CN':['4 款在线','8 个预留位置'],'zh-TW':['4 款上線','8 個預留位置'],pt:['4 jogos online','8 espaços reservados']
+  };
+  Object.entries(spiderTranslations).forEach(([locale, game]) => {
+    translations[locale].games.spider = game;
+    [translations[locale].ui.online, translations[locale].ui.futureSlots] = availabilityTranslations[locale];
+  });
+
   const countryLocales = {
     CN:'zh-CN', SG:'zh-CN', TW:'zh-TW', HK:'zh-TW', MO:'zh-TW', JP:'ja', KR:'ko', FR:'fr', MC:'fr', IT:'it', SM:'it', VA:'it', RU:'ru', BY:'ru', KZ:'ru', KG:'ru', PT:'pt', BR:'pt', AO:'pt', MZ:'pt', CV:'pt', GW:'pt', ST:'pt', TL:'pt'
   };
