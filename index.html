@@ -33,95 +33,113 @@
     </script>
   </head>
   <body>
-    <div class="grain" aria-hidden="true"></div>
-    <header class="topbar">
-      <a class="brand" href="./" aria-label="TZT GAME 首页">
-        <span class="brand-mark">T</span>
-        <span>TZT GAME</span>
-      </a>
-      <div class="online-pill"><i></i> ONLINE</div>
-    </header>
+    <div class="page-glow" aria-hidden="true"></div>
+    <div class="site-shell">
+      <header class="topbar">
+        <a class="brand" href="./" aria-label="TZT GAME 首页">
+          <span class="brand-mark">T</span>
+          <span class="brand-copy"><strong>TZT</strong><small>GAME ROOM</small></span>
+        </a>
+        <nav aria-label="主导航">
+          <a href="#games">游戏库</a>
+          <a href="#future">开发计划</a>
+          <a href="mailto:tzt321nice@gmail.com">联系作者</a>
+        </nav>
+        <div class="online-pill"><i></i><span>03 款在线</span></div>
+      </header>
 
-    <main>
-      <section class="hero">
-        <p class="eyebrow">WELCOME TO MY ARCADE</p>
-        <h1>选一个世界，<br><em>开始游戏。</em></h1>
-        <p class="lead">这里收录了我制作的小游戏。无需安装，浏览器打开就能开始。</p>
-        <a class="hero-action" href="#games">浏览游戏 <span>↓</span></a>
-      </section>
-
-      <section id="games" class="games-section">
-        <div class="section-heading">
-          <div>
-            <p class="eyebrow">THE COLLECTION</p>
-            <h2>游戏库</h2>
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">WELCOME TO TZT GAME ROOM</p>
+            <h1>打开浏览器，<br><em>挑一个就玩。</em></h1>
+            <p class="lead">这里是我的个人游戏库。所有游戏都无需安装，并会随着新版本自动更新。</p>
           </div>
-          <p>网页版本会随每次发布自动更新</p>
-        </div>
+          <div class="library-count" aria-label="游戏库统计">
+            <div><strong>03</strong><span>已上线</span></div>
+            <div><strong>09</strong><span>预留卡位</span></div>
+          </div>
+        </section>
 
-        <div class="game-grid">
-          <article class="game-card featured" style="--accent:#f0c45a">
-            <div class="cover">
+        <section id="games" class="library-section">
+          <div class="library-toolbar">
+            <div>
+              <p class="eyebrow">PLAY NOW</p>
+              <h2>游戏库</h2>
+            </div>
+            <div class="category-list" aria-label="游戏分类">
+              <span class="active">全部</span>
+              <span>棋牌</span>
+              <span>竞速</span>
+              <span>策略</span>
+              <span>更多开发中</span>
+            </div>
+          </div>
+
+          <div class="game-wall">
+            <article class="game-tile game-live tile-large" style="--accent:#f4cf61">
               <img src="assets/mahjong-cover-v2.webp" alt="麻雀游戏封面">
-              <span class="status ready">现在可玩</span>
-              <span class="number">01</span>
-            </div>
-            <div class="card-body">
-              <div class="meta"><span>棋牌 · 策略</span><span>WEB v0.7.0</span></div>
-              <h3>麻雀</h3>
-              <p class="en-title">MAHJONG LAB</p>
-              <p class="description">四人及三人日式麻将训练，包含完整对局、番种计分和 AI 牌效分析。</p>
-              <div class="card-actions">
-                <a class="play" href="games/mahjong/" target="_blank" rel="noopener noreferrer">立即游玩 <span>→</span></a>
-                <a class="source" href="https://github.com/tzt302/game_mahjong" target="_blank" rel="noreferrer">源代码 ↗</a>
+              <div class="tile-shade"></div>
+              <div class="tile-top"><span class="live-dot">现在可玩</span><b>01</b></div>
+              <div class="tile-copy">
+                <span>棋牌 · 策略</span>
+                <h3>麻雀</h3>
+                <p>四人及三人日式麻将 · AI 牌效分析</p>
+                <strong>开始游戏 <i>↗</i></strong>
               </div>
-            </div>
-          </article>
+              <a class="tile-link" href="games/mahjong/" target="_blank" rel="noopener noreferrer" aria-label="在新标签页打开麻雀"></a>
+            </article>
 
-          <article class="game-card" style="--accent:#ff5d3b">
-            <div class="cover">
+            <article class="game-tile game-live tile-large" style="--accent:#ff7358">
               <img src="assets/racing-cover-v2.webp" alt="赛车游戏封面">
-              <span class="status ready">现在可玩</span>
-              <span class="number">02</span>
-            </div>
-            <div class="card-body">
-              <div class="meta"><span>竞速 · 模拟</span><span>WEB v2.6</span></div>
-              <h3>赛车</h3>
-              <p class="en-title">FORMULA RACING</p>
-              <p class="description">挑战真实赛道、AI 对手与个人最快圈的方程式赛车游戏。</p>
-              <div class="card-actions">
-                <a class="play" href="games/racing/" target="_blank" rel="noopener noreferrer">立即游玩 <span>→</span></a>
-                <a class="source" href="https://github.com/tzt302/game_racing" target="_blank" rel="noreferrer">源代码 ↗</a>
+              <div class="tile-shade"></div>
+              <div class="tile-top"><span class="live-dot">现在可玩</span><b>02</b></div>
+              <div class="tile-copy">
+                <span>竞速 · 模拟</span>
+                <h3>赛车</h3>
+                <p>真实赛道 · AI 对手 · 计时挑战</p>
+                <strong>开始游戏 <i>↗</i></strong>
               </div>
-            </div>
-          </article>
+              <a class="tile-link" href="games/racing/" target="_blank" rel="noopener noreferrer" aria-label="在新标签页打开赛车"></a>
+            </article>
 
-          <article class="game-card" style="--accent:#00d9aa">
-            <div class="cover">
+            <article class="game-tile game-live tile-large" style="--accent:#5df1c5">
               <img src="assets/poker-cover-v2.webp" alt="德扑游戏封面">
-              <span class="status ready">现在可玩</span>
-              <span class="number">03</span>
-            </div>
-            <div class="card-body">
-              <div class="meta"><span>棋牌 · 策略</span><span>WEB v2.2.0</span></div>
-              <h3>德扑</h3>
-              <p class="en-title">TEXAS HOLD'EM</p>
-              <p class="description">在霓虹牌桌上与四名不同风格的 AI 展开完整德州扑克对局。</p>
-              <div class="card-actions">
-                <a class="play" href="games/poker/" target="_blank" rel="noopener noreferrer">立即游玩 <span>→</span></a>
-                <a class="source" href="https://github.com/tzt302/game_poker" target="_blank" rel="noreferrer">源代码 ↗</a>
+              <div class="tile-shade"></div>
+              <div class="tile-top"><span class="live-dot">现在可玩</span><b>03</b></div>
+              <div class="tile-copy">
+                <span>棋牌 · 策略</span>
+                <h3>德扑</h3>
+                <p>单机牌桌 · 四名 AI 对手</p>
+                <strong>开始游戏 <i>↗</i></strong>
               </div>
-            </div>
-          </article>
-        </div>
-      </section>
-    </main>
+              <a class="tile-link" href="games/poker/" target="_blank" rel="noopener noreferrer" aria-label="在新标签页打开德扑"></a>
+            </article>
 
-    <footer>
-      <a class="brand footer-brand" href="./"><span class="brand-mark">T</span><span>TZT GAME</span></a>
-      <a class="footer-contact" href="mailto:tzt321nice@gmail.com"><span>联系作者</span><strong>tzt321nice@gmail.com</strong></a>
-      <p>© <span id="year"></span> TZT</p>
-    </footer>
+            <article class="game-tile game-slot" style="--slot:#ffca63"><div class="slot-icon">◇</div><div><span>SLOT 04</span><h3>逻辑解谜</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#9b8cff"><div class="slot-icon">✦</div><div><span>SLOT 05</span><h3>街机挑战</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#ff7ab7"><div class="slot-icon">⌁</div><div><span>SLOT 06</span><h3>多人游戏</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#79e8ff"><div class="slot-icon">◎</div><div><span>SLOT 07</span><h3>模拟经营</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#91e46f"><div class="slot-icon">♤</div><div><span>SLOT 08</span><h3>新卡牌</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#ff9a67"><div class="slot-icon">△</div><div><span>SLOT 09</span><h3>策略游戏</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#68d6bc"><div class="slot-icon">○</div><div><span>SLOT 10</span><h3>休闲游戏</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot" style="--slot:#7aa8ff"><div class="slot-icon">＋</div><div><span>SLOT 11</span><h3>实验作品</h3><p>待开发</p></div></article>
+            <article class="game-tile game-slot slot-wide" style="--slot:#d9ff68"><div class="slot-icon">12</div><div><span>NEXT RELEASE</span><h3>下一款游戏，会是什么？</h3><p>这个位置留给未来。</p></div></article>
+          </div>
+        </section>
+
+        <section id="future" class="future-banner">
+          <div><p class="eyebrow">ALWAYS GROWING</p><h2>游戏库会继续长大。</h2></div>
+          <p>新游戏完成后会替换上方的预留卡位。入口不变，打开网站就能玩到最新版本。</p>
+        </section>
+      </main>
+
+      <footer>
+        <a class="brand footer-brand" href="./"><span class="brand-mark">T</span><span class="brand-copy"><strong>TZT</strong><small>GAME ROOM</small></span></a>
+        <a class="footer-contact" href="mailto:tzt321nice@gmail.com"><span>联系作者</span><strong>tzt321nice@gmail.com</strong></a>
+        <p>© <span id="year"></span> TZT</p>
+      </footer>
+    </div>
     <script src="app.js"></script>
   </body>
 </html>
