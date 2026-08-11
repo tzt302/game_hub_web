@@ -79,6 +79,9 @@ main { padding: 18px 0 0; }
 .game-upcoming h3 { margin: 4px 0 1px; overflow: hidden; font-size: clamp(13px, 1.2vw, 18px); text-overflow: ellipsis; white-space: nowrap; }
 .game-upcoming p { margin: 0; color: rgba(23,62,80,.6); font-size: 9px; }
 .placeholder-art { flex: 1; display: grid; place-items: center; font-size: clamp(30px, 3vw, 48px); filter: drop-shadow(0 5px 0 rgba(23,62,80,.12)); }
+.game-upcoming.reserved { border-color: rgba(255,255,255,.92); background: linear-gradient(145deg,#e9fbf7,#d9f2ed); color: #53757d; }
+.game-upcoming.reserved .placeholder-art { width: 50px; height: 50px; margin: auto; align-self: center; flex: 0 0 auto; border: 3px dashed #9bcfc6; border-radius: 17px; color: #6eb9ad; background: rgba(255,255,255,.58); filter: none; font-size: 32px; font-weight: 500; }
+.game-upcoming.reserved span,.game-upcoming.reserved p { color: #78969b; }
 .lemon { background: linear-gradient(145deg, #fff8b8, #ffe17c); }
 .grape { background: linear-gradient(145deg, #e5ddff, #b9a9ff); }
 .pink { background: linear-gradient(145deg, #ffe0ef, #ffafd3); }
