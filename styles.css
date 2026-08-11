@@ -13,7 +13,7 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; background: #29d9cf; color: var(--ink); font-family: Inter, "Microsoft YaHei", system-ui, sans-serif; }
 a { color: inherit; }
-button, input { font: inherit; }
+button, input, select { font: inherit; }
 .cartoon-bg { position: fixed; z-index: -2; inset: 0; overflow: hidden; background: linear-gradient(145deg, #23d7d0 0%, #67efdc 52%, #27cfc4 100%); }
 .cartoon-bg::before, .cartoon-bg::after { content: ""; position: absolute; width: 70vw; height: 70vw; border: 8vw solid rgba(255,255,255,.14); transform: rotate(28deg); }
 .cartoon-bg::before { left: -45vw; top: -35vw; }
@@ -34,6 +34,9 @@ button, input { font: inherit; }
 .topbar nav a { padding: 10px 4px; color: #526f7b; font-size: 13px; font-weight: 900; text-decoration: none; }
 .topbar nav a.active, .topbar nav a:hover { color: #0c9f9a; }
 .header-actions { display: flex; align-items: center; gap: 10px; }
+.language-picker { min-width: 132px; height: 42px; padding: 0 11px; display: flex; align-items: center; gap: 7px; border: 2px solid #bfe9e2; border-radius: 14px; background: #effaf7; color: #176d69; transition: border-color .18s ease, background .18s ease, box-shadow .18s ease; }
+.language-picker:focus-within { border-color: var(--mint-dark); background: #fff; box-shadow: 0 0 0 4px rgba(41,219,207,.13); }
+.language-picker select { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: var(--ink); cursor: pointer; font-size: 11px; font-weight: 900; }
 .online-pill { display: flex; align-items: center; gap: 8px; padding: 11px 14px; border-radius: 999px; background: #dffbf4; color: #1b7567; font-size: 11px; font-weight: 900; }
 .online-pill i { width: 8px; height: 8px; border-radius: 50%; background: #22d394; box-shadow: 0 0 0 5px rgba(34,211,148,.14); }
 .mail-button { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 14px; background: #fff1a9; color: #7a5e00; font-size: 18px; text-decoration: none; box-shadow: inset 0 -4px 0 rgba(169,120,0,.14); }
@@ -144,6 +147,15 @@ main { padding: 18px 0 0; }
 footer { min-height: 116px; margin-top: 18px; padding: 24px 28px; display: flex; align-items: center; justify-content: space-between; gap: 25px; border: 3px solid rgba(255,255,255,.85); border-radius: 26px; background: rgba(248,255,253,.96); color: var(--muted); font-size: 11px; box-shadow: var(--shadow); }
 footer > a:last-child { color: #188b83; font-weight: 800; text-decoration: none; }
 
+html[dir="rtl"] body { font-family: Tahoma, Arial, "Microsoft YaHei", sans-serif; }
+html[dir="rtl"] .category-rail, html[dir="rtl"] .game-preview { transform-origin: right center; }
+html[dir="rtl"] .filter-button { text-align: right; }
+html[dir="rtl"] .filter-button:hover { transform: translateX(3px); }
+html[dir="rtl"] .preview-close { right: auto; left: 13px; }
+html[dir="rtl"] .preview-cover span { right: 13px; left: auto; }
+html[dir="rtl"] .side-stack.preview-open .category-rail { transform: translateX(20px) rotateY(-6deg) scale(.96); }
+html[lang="ru"] .game-info h3, html[lang="fr"] .game-info h3, html[lang="ar"] .game-info h3 { font-size: clamp(30px, 2.8vw, 46px); }
+
 @media (max-width: 1180px) {
   .catalog-layout { grid-template-columns: 1fr; }
   .side-stack { position: static; min-height: 0; order: -1; perspective: none; }
@@ -158,6 +170,7 @@ footer > a:last-child { color: #188b83; font-weight: 800; text-decoration: none;
   .site-shell { width: calc(100% - 24px); margin: 12px auto; }
   .topbar { min-height: 72px; grid-template-columns: 1fr auto; border-radius: 21px; }
   .topbar nav, .online-pill { display: none; }
+  .language-picker { min-width: 124px; }
   .brand-mark { width: 44px; height: 44px; border-radius: 13px; font-size: 21px; }
   .catalog-head { align-items: flex-start; flex-direction: column; border-radius: 22px; }
   .search-box { width: 100%; }
@@ -177,6 +190,7 @@ footer > a:last-child { color: #188b83; font-weight: 800; text-decoration: none;
 }
 
 @media (max-width: 520px) {
+  .topbar .brand-copy small { display: none; }
   .catalog-head { padding: 21px; }
   .catalog-head h1 { display: block; margin: 0 0 4px; font-size: 39px; }
   .catalog-head > div > span { font-size: 10px; }
@@ -188,6 +202,9 @@ footer > a:last-child { color: #188b83; font-weight: 800; text-decoration: none;
   .game-card { border-width: 3px; border-radius: 20px; }
   .game-info { right: 16px; bottom: 14px; left: 16px; }
   .game-info h3 { font-size: 40px; }
+  html[lang="ru"] .game-info h3, html[lang="fr"] .game-info h3, html[lang="ar"] .game-info h3 { font-size: 34px; }
+  .language-picker { min-width: 112px; max-width: 132px; padding: 0 8px; }
+  .language-picker select { font-size: 10px; }
   .placeholder-art { font-size: 36px; }
   .game-upcoming h3 { font-size: 13px; }
 }
