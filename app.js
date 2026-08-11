@@ -32,7 +32,7 @@ function showPreview(card) {
   card.classList.add('is-previewed');
 
   previewImage.src = card.querySelector('img').src;
-  previewImage.alt = `${card.querySelector('h3').textContent}游戏封面`;
+  previewImage.alt = card.querySelector('img').alt;
   previewCategory.textContent = card.dataset.previewCategory;
   previewTitle.textContent = card.querySelector('h3').textContent;
   previewDescription.textContent = card.dataset.previewDescription;
@@ -112,4 +112,9 @@ previewPanel.addEventListener('focusout', schedulePreviewClose);
 previewClose.addEventListener('click', hidePreview);
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') hidePreview();
+});
+
+window.addEventListener('tzt-language-change', () => {
+  updateCatalog();
+  if (activePreviewCard) showPreview(activePreviewCard);
 });

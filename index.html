@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" dir="ltr">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,84 +36,100 @@
     <div class="cartoon-bg" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="site-shell">
       <header class="topbar">
-        <a class="brand" href="./" aria-label="TZT GAME 首页">
+        <a class="brand" href="./" aria-label="TZT GAME 首页" data-i18n-aria="brandAria">
           <span class="brand-mark">T</span>
-          <span class="brand-copy"><strong>TZT GAME</strong><small>随时开玩</small></span>
+          <span class="brand-copy"><strong>TZT GAME</strong><small data-i18n="brandTagline">随时开玩</small></span>
         </a>
-        <nav aria-label="主导航">
-          <a class="active" href="#games">游戏大厅</a>
-          <a href="https://github.com/tzt302" target="_blank" rel="noreferrer">开发日志</a>
-          <a href="mailto:tzt321nice@gmail.com">联系作者</a>
+        <nav aria-label="主导航" data-i18n-aria="navAria">
+          <a class="active" href="#games" data-i18n="navLobby">游戏大厅</a>
+          <a href="https://github.com/tzt302" target="_blank" rel="noreferrer" data-i18n="navDev">开发日志</a>
+          <a href="mailto:tzt321nice@gmail.com" data-i18n="navContact">联系作者</a>
         </nav>
         <div class="header-actions">
-          <span class="online-pill"><i></i> 3 款在线</span>
-          <a class="mail-button" href="mailto:tzt321nice@gmail.com" aria-label="联系作者">✉</a>
+          <label class="language-picker" for="languageSelect">
+            <span aria-hidden="true">🌐</span>
+            <select id="languageSelect" aria-label="切换语言" data-i18n-aria="languageAria">
+              <option value="en">English</option>
+              <option value="ja">日本語</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="ru">Русский</option>
+              <option value="it">Italiano</option>
+              <option value="ar">العربية</option>
+              <option value="ko">한국어</option>
+              <option value="zh-CN">简体中文</option>
+              <option value="zh-TW">繁體中文</option>
+              <option value="pt">Português</option>
+            </select>
+          </label>
+          <span class="online-pill"><i></i><span data-i18n="online">3 款在线</span></span>
+          <a class="mail-button" href="mailto:tzt321nice@gmail.com" aria-label="联系作者" data-i18n-aria="navContact">✉</a>
         </div>
       </header>
 
       <main id="games">
         <section class="catalog-head">
           <div>
-            <p>WELCOME, PLAYER!</p>
-            <h1>游戏中心</h1>
-            <span>无需安装 · 免费游玩 · 自动更新</span>
+            <p data-i18n="heroKicker">WELCOME, PLAYER!</p>
+            <h1 data-i18n="heroTitle">游戏中心</h1>
+            <span data-i18n="heroSub">无需安装 · 免费游玩 · 自动更新</span>
           </div>
           <label class="search-box">
             <span>⌕</span>
-            <input id="gameSearch" type="search" placeholder="搜索游戏" autocomplete="off">
+            <input id="gameSearch" type="search" placeholder="搜索游戏" data-i18n-placeholder="searchPlaceholder" autocomplete="off">
           </label>
         </section>
 
         <div class="catalog-layout">
           <section class="game-area" aria-labelledby="featuredTitle">
             <div class="section-title">
-              <div><span>FEATURED GAMES</span><h2 id="featuredTitle">推荐游戏</h2></div>
-              <p><b>3</b> 款可以立即游玩</p>
+              <div><span data-i18n="featuredKicker">FEATURED GAMES</span><h2 id="featuredTitle" data-i18n="featuredTitle">推荐游戏</h2></div>
+              <p><b>3</b> <span data-i18n="playable">款可以立即游玩</span></p>
             </div>
 
             <div class="game-grid" id="gameGrid">
-              <a class="game-card game-live" style="--card-accent:#ff806d" data-category="table strategy" data-name="麻雀 日麻 棋牌 策略" data-preview-category="棋牌 · 策略" data-preview-description="完整的四人及三人日式麻将体验，包含立直、吃碰杠、和牌番种展示与 AI 牌效分析。" data-preview-features="四人 / 三人日麻|AI 牌效分析|手机端适配" href="games/mahjong/" target="_blank" rel="noopener noreferrer">
+              <a class="game-card game-live" data-game-id="mahjong" style="--card-accent:#ff806d" data-category="table strategy" data-name="麻雀 日麻 棋牌 策略" data-preview-category="棋牌 · 策略" data-preview-description="完整的四人及三人日式麻将体验，包含立直、吃碰杠、和牌番种展示与 AI 牌效分析。" data-preview-features="四人 / 三人日麻|AI 牌效分析|手机端适配" href="games/mahjong/" target="_blank" rel="noopener noreferrer">
                 <img src="assets/mahjong-cartoon-v1.webp" alt="麻雀卡通游戏封面">
                 <div class="game-info"><small>棋牌 · 策略</small><h3>麻雀</h3><p>四人及三人日麻</p><b>开始游戏 <i>▶</i></b></div>
               </a>
 
-              <a class="game-card game-live" style="--card-accent:#ffbd48" data-category="racing" data-name="赛车 方程式 竞速 模拟" data-preview-category="竞速 · 模拟" data-preview-description="驾驶方程式赛车挑战多条赛道，与 AI 对手竞速，支持键盘、手机触控和游戏手柄。" data-preview-features="多条真实赛道|AI 竞速对手|键鼠 / 触控 / 手柄" href="games/racing/" target="_blank" rel="noopener noreferrer">
+              <a class="game-card game-live" data-game-id="racing" style="--card-accent:#ffbd48" data-category="racing" data-name="赛车 方程式 竞速 模拟" data-preview-category="竞速 · 模拟" data-preview-description="驾驶方程式赛车挑战多条赛道，与 AI 对手竞速，支持键盘、手机触控和游戏手柄。" data-preview-features="多条真实赛道|AI 竞速对手|键鼠 / 触控 / 手柄" href="games/racing/" target="_blank" rel="noopener noreferrer">
                 <img src="assets/racing-cartoon-v1.webp" alt="赛车卡通游戏封面">
                 <div class="game-info"><small>竞速 · 模拟</small><h3>赛车</h3><p>赛道与 AI 对手</p><b>开始游戏 <i>▶</i></b></div>
               </a>
 
-              <a class="game-card game-live" style="--card-accent:#4fe0b6" data-category="table strategy" data-name="德扑 德州扑克 棋牌 策略" data-preview-category="棋牌 · 策略" data-preview-description="单机德州扑克牌桌，对战四名风格自然的 AI 对手，体验完整的翻牌前到河牌轮次。" data-preview-features="四名 AI 对手|完整下注流程|无需登录" href="games/poker/" target="_blank" rel="noopener noreferrer">
+              <a class="game-card game-live" data-game-id="poker" style="--card-accent:#4fe0b6" data-category="table strategy" data-name="德扑 德州扑克 棋牌 策略" data-preview-category="棋牌 · 策略" data-preview-description="单机德州扑克牌桌，对战四名风格自然的 AI 对手，体验完整的翻牌前到河牌轮次。" data-preview-features="四名 AI 对手|完整下注流程|无需登录" href="games/poker/" target="_blank" rel="noopener noreferrer">
                 <img src="assets/poker-cartoon-v1.webp" alt="德扑卡通游戏封面">
                 <div class="game-info"><small>棋牌 · 策略</small><h3>德扑</h3><p>挑战四名 AI</p><b>开始游戏 <i>▶</i></b></div>
               </a>
 
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
             </div>
-            <div class="empty-state" id="emptyState" hidden><span>🔍</span><h3>没有找到这个游戏</h3><p>换个关键词试试看吧。</p></div>
+            <div class="empty-state" id="emptyState" hidden><span>🔍</span><h3 data-i18n="emptyTitle">没有找到这个游戏</h3><p data-i18n="emptyBody">换个关键词试试看吧。</p></div>
           </section>
 
-          <aside class="side-stack" id="sideStack" aria-label="游戏分类与介绍">
+          <aside class="side-stack" id="sideStack" aria-label="游戏分类与介绍" data-i18n-aria="sideAria">
             <div class="category-rail" id="categoryRail">
-              <div class="rail-title"><span>快速分类</span><b>全部游戏</b></div>
-              <button class="filter-button active" data-filter="all"><i>🎮</i><span><b>全部游戏</b><small>12 个位置</small></span></button>
-              <button class="filter-button" data-filter="table"><i>🀄</i><span><b>棋牌游戏</b><small>麻将与卡牌</small></span></button>
-              <button class="filter-button" data-filter="racing"><i>🏎️</i><span><b>竞速游戏</b><small>速度与赛道</small></span></button>
-              <button class="filter-button" data-filter="strategy"><i>🧠</i><span><b>策略游戏</b><small>思考与挑战</small></span></button>
-              <button class="filter-button" data-filter="future"><i>✨</i><span><b>即将上线</b><small>9 个预留位置</small></span></button>
-              <div class="rail-note"><strong>持续更新</strong><p>新游戏完成后会自动出现在这里。</p></div>
+              <div class="rail-title"><span data-i18n="quickCategories">快速分类</span><b data-i18n="allGames">全部游戏</b></div>
+              <button class="filter-button active" data-filter="all"><i>🎮</i><span><b data-i18n="allGames">全部游戏</b><small data-i18n="allSlots">12 个位置</small></span></button>
+              <button class="filter-button" data-filter="table"><i>🀄</i><span><b data-i18n="tableGames">棋牌游戏</b><small data-i18n="tableSub">麻将与卡牌</small></span></button>
+              <button class="filter-button" data-filter="racing"><i>🏎️</i><span><b data-i18n="racingGames">竞速游戏</b><small data-i18n="racingSub">速度与赛道</small></span></button>
+              <button class="filter-button" data-filter="strategy"><i>🧠</i><span><b data-i18n="strategyGames">策略游戏</b><small data-i18n="strategySub">思考与挑战</small></span></button>
+              <button class="filter-button" data-filter="future"><i>✨</i><span><b data-i18n="comingSoon">即将上线</b><small data-i18n="futureSlots">9 个预留位置</small></span></button>
+              <div class="rail-note"><strong data-i18n="updates">持续更新</strong><p data-i18n="updateBody">新游戏完成后会自动出现在这里。</p></div>
             </div>
 
             <section class="game-preview" id="gamePreview" aria-live="polite" aria-hidden="true">
-              <button class="preview-close" id="previewClose" type="button" aria-label="关闭游戏介绍">×</button>
-              <div class="preview-cover"><img id="previewImage" src="assets/mahjong-cartoon-v1.webp" alt=""><span>游戏介绍</span></div>
+              <button class="preview-close" id="previewClose" type="button" aria-label="关闭游戏介绍" data-i18n-aria="previewClose">×</button>
+              <div class="preview-cover"><img id="previewImage" src="assets/mahjong-cartoon-v1.webp" alt=""><span data-i18n="previewLabel">游戏介绍</span></div>
               <div class="preview-copy">
                 <small id="previewCategory">棋牌 · 策略</small>
                 <h2 id="previewTitle">麻雀</h2>
@@ -127,11 +143,12 @@
       </main>
 
       <footer>
-        <a class="brand" href="./"><span class="brand-mark">T</span><span class="brand-copy"><strong>TZT GAME</strong><small>随时开玩</small></span></a>
-        <p>© <span id="year"></span> TZT · 网页小游戏中心</p>
-        <a href="mailto:tzt321nice@gmail.com">联系作者：tzt321nice@gmail.com</a>
+        <a class="brand" href="./"><span class="brand-mark">T</span><span class="brand-copy"><strong>TZT GAME</strong><small data-i18n="brandTagline">随时开玩</small></span></a>
+        <p>© <span id="year"></span> TZT · <span data-i18n="footerCenter">网页小游戏中心</span></p>
+        <a href="mailto:tzt321nice@gmail.com"><span data-i18n="contactAuthor">联系作者</span>：tzt321nice@gmail.com</a>
       </footer>
     </div>
+    <script src="i18n.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
