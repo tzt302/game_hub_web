@@ -258,33 +258,56 @@ function gapLabel(car){const gap=(progressScore(state.player,state.track)-progre
 
 function draw() {
   const width=state.screenWidth||canvas.clientWidth,height=state.screenHeight||canvas.clientHeight; context.clearRect(0,0,width,height);
-  context.fillStyle='#203d2b';context.fillRect(0,0,width,height);
+  drawBackdrop(width,height);
   if(!state.track||!state.player){drawLoading(width,height);return;}
   drawWorld(width,height); drawMinimap(width,height);
 }
-function drawLoading(width,height){context.fillStyle='#fff';context.font='700 14px Microsoft YaHei';context.textAlign='center';context.fillText('正在加载赛道遥测…',width/2,height/2);}
+function roundedRectPath(x,y,width,height,radius){
+  const r=Math.min(radius,width/2,height/2);context.beginPath();context.moveTo(x+r,y);context.lineTo(x+width-r,y);context.quadraticCurveTo(x+width,y,x+width,y+r);context.lineTo(x+width,y+height-r);context.quadraticCurveTo(x+width,y+height,x+width-r,y+height);context.lineTo(x+r,y+height);context.quadraticCurveTo(x,y+height,x,y+height-r);context.lineTo(x,y+r);context.quadraticCurveTo(x,y,x+r,y);context.closePath();
+}
+function drawBackdrop(width,height){
+  const gradient=context.createLinearGradient(0,0,width,height);gradient.addColorStop(0,'#79e49a');gradient.addColorStop(.58,'#55d98d');gradient.addColorStop(1,'#35c87e');context.fillStyle=gradient;context.fillRect(0,0,width,height);
+  context.save();context.globalAlpha=.2;for(let y=22;y<height;y+=58){for(let x=22+(Math.floor(y/58)%2)*28;x<width;x+=58){context.fillStyle=(x+y)%3?'#ffffff':'#ffe264';context.beginPath();context.arc(x,y,2.3,0,Math.PI*2);context.fill();}}context.restore();
+}
+function drawLoading(width,height){context.fillStyle='#123d52';context.font='900 15px Microsoft YaHei';context.textAlign='center';context.fillText('正在准备玩具赛道…',width/2,height/2);}
 
 function drawWorld(width,height){
   const track=state.track,scale=state.viewScale; context.save();context.translate(width/2,height*.54);context.rotate(-state.player.heading-Math.PI/2);context.scale(scale,scale);context.translate(-state.player.x,-state.player.y);
   const centerPath=new Path2D(); track.points.forEach((point,index)=>index?centerPath.lineTo(point.x,point.y):centerPath.moveTo(point.x,point.y));centerPath.closePath();
-  context.lineJoin='round';context.lineCap='round';context.strokeStyle='#1a1d20';context.lineWidth=track.width+12.5;context.stroke(centerPath);context.strokeStyle='#716e63';context.lineWidth=track.width+10;context.stroke(centerPath);context.strokeStyle='#eee9df';context.lineWidth=track.width+2.5;context.stroke(centerPath);context.strokeStyle='#d62d35';context.setLineDash([3.8,3.8]);context.lineWidth=track.width+2.2;context.stroke(centerPath);context.setLineDash([]);context.strokeStyle='#3f464d';context.lineWidth=track.width;context.stroke(centerPath);
+  context.lineJoin='round';context.lineCap='round';
+  context.strokeStyle='#15736a';context.lineWidth=track.width+15.5;context.stroke(centerPath);
+  context.strokeStyle='#ffe05b';context.lineWidth=track.width+12.5;context.stroke(centerPath);
+  context.strokeStyle='#fffdf1';context.lineWidth=track.width+9.2;context.stroke(centerPath);
+  context.strokeStyle='#ff6558';context.setLineDash([3.8,3.8]);context.lineWidth=track.width+7.2;context.stroke(centerPath);context.setLineDash([]);
+  context.strokeStyle='#526b7a';context.lineWidth=track.width;context.stroke(centerPath);
+  context.strokeStyle='rgba(255,255,255,.22)';context.setLineDash([1.1,5]);context.lineWidth=.24;context.stroke(centerPath);context.setLineDash([]);
   if(state.showLine) drawRacingLine(track);
   drawTimingLines(track); if(state.mode==='race') [...state.ai].sort((a,b)=>a.y-b.y).forEach(car=>drawCar(car,false));drawCar(state.player,true);context.restore();
 }
 function drawRacingLine(track){
-  let lastColor='';let path=null; const flush=()=>{if(path){context.strokeStyle=lastColor;context.lineWidth=.72;context.globalAlpha=.9;context.stroke(path);context.globalAlpha=1;}};
+  let lastColor='';let path=null; const flush=()=>{if(path){context.strokeStyle='rgba(7,68,78,.22)';context.lineWidth=1.35;context.stroke(path);context.strokeStyle=lastColor;context.lineWidth=.85;context.globalAlpha=.96;context.stroke(path);context.globalAlpha=1;}};
   track.racingLine.forEach((point,index)=>{const color=track.brakeIndices.has(index)?'#ff4438':track.liftIndices.has(index)?'#ffbd35':'#28dbe8';if(color!==lastColor){flush();path=new Path2D();path.moveTo(point.x,point.y);lastColor=color;}else path.lineTo(point.x,point.y);});flush();
-  context.font='700 3.2px Microsoft YaHei';context.textAlign='center';context.textBaseline='bottom';track.brakeZones.forEach(zone=>{const p=track.points[zone.index],nx=-Math.sin(p.heading),ny=Math.cos(p.heading);context.strokeStyle='#ff4438';context.lineWidth=.55;context.beginPath();context.moveTo(p.x+nx*track.width*.46,p.y+ny*track.width*.46);context.lineTo(p.x-nx*track.width*.46,p.y-ny*track.width*.46);context.stroke();context.save();context.translate(p.x,p.y);context.rotate(p.heading+Math.PI/2);context.fillStyle='#fff';context.fillText(`${zone.targetKmh}`,0,-1);context.restore();});
+  context.font='900 3.1px Microsoft YaHei';context.textAlign='center';context.textBaseline='bottom';track.brakeZones.forEach(zone=>{const p=track.points[zone.index],nx=-Math.sin(p.heading),ny=Math.cos(p.heading);context.strokeStyle='#ff6758';context.lineWidth=.72;context.beginPath();context.moveTo(p.x+nx*track.width*.46,p.y+ny*track.width*.46);context.lineTo(p.x-nx*track.width*.46,p.y-ny*track.width*.46);context.stroke();context.save();context.translate(p.x,p.y);context.rotate(p.heading+Math.PI/2);context.fillStyle='#fff8bf';context.fillText(`${zone.targetKmh}`,0,-1);context.restore();});
 }
-function drawTimingLines(track){[0,...track.sectorIndices].forEach((index,marker)=>{const p=track.points[index],nx=-Math.sin(p.heading),ny=Math.cos(p.heading);context.strokeStyle=marker===0?'#fff':'#32dbe8';context.lineWidth=.8;context.beginPath();context.moveTo(p.x+nx*track.width/2,p.y+ny*track.width/2);context.lineTo(p.x-nx*track.width/2,p.y-ny*track.width/2);context.stroke();});}
+function drawTimingLines(track){[0,...track.sectorIndices].forEach((index,marker)=>{const p=track.points[index],nx=-Math.sin(p.heading),ny=Math.cos(p.heading);context.strokeStyle=marker===0?'#fff8b8':'#42e8dd';context.lineWidth=1;context.beginPath();context.moveTo(p.x+nx*track.width/2,p.y+ny*track.width/2);context.lineTo(p.x-nx*track.width/2,p.y-ny*track.width/2);context.stroke();});}
 function drawCar(car,player){
-  const [body,accent]=player?LIVERIES[state.livery]:[car.color,'#f2f2f2'];context.save();context.translate(car.x,car.y);context.rotate(car.heading);context.fillStyle='#07090b';
-  [[-2.1,-1.25,1.45,.62],[-2.1,.63,1.45,.62],[1.3,-1.08,1.25,.48],[1.3,.60,1.25,.48]].forEach(rect=>context.fillRect(...rect));context.fillStyle=body;context.beginPath();context.moveTo(2.75,0);context.lineTo(.8,-.55);context.lineTo(-2.45,-.68);context.lineTo(-2.75,.68);context.lineTo(.8,.55);context.closePath();context.fill();context.fillStyle=accent;context.fillRect(-2.35,-.12,4.25,.24);context.fillStyle='#101318';context.beginPath();context.ellipse(-.55,0,.72,.38,0,0,Math.PI*2);context.fill();context.fillStyle='#080a0c';context.fillRect(-2.75,-1.05,.28,2.1);context.fillRect(2.05,-1.18,.25,2.36);if(player){context.strokeStyle='#fff';context.lineWidth=.08;context.strokeRect(-2.75,-1.05,5.05,2.1);}context.restore();
+  const [body,accent]=player?LIVERIES[state.livery]:[car.color,'#fff4a3'];context.save();context.translate(car.x,car.y);context.rotate(car.heading);context.scale(1.55,1.55);
+  context.fillStyle='rgba(8,68,73,.32)';context.beginPath();context.ellipse(-.15,.18,3.45,1.48,0,0,Math.PI*2);context.fill();
+  context.fillStyle='#172b35';[[-2.18,-1.27,1.42,.66],[-2.18,.61,1.42,.66],[1.24,-1.12,1.2,.52],[1.24,.60,1.2,.52]].forEach(([x,y,w,h])=>{roundedRectPath(x,y,w,h,.2);context.fill();});
+  context.fillStyle=body;context.beginPath();context.moveTo(2.86,0);context.quadraticCurveTo(1.7,-.28,.78,-.62);context.lineTo(-1.7,-.78);context.quadraticCurveTo(-2.62,-.64,-2.78,0);context.quadraticCurveTo(-2.62,.64,-1.7,.78);context.lineTo(.78,.62);context.quadraticCurveTo(1.7,.28,2.86,0);context.closePath();context.fill();
+  context.strokeStyle='rgba(255,255,255,.72)';context.lineWidth=.12;context.stroke();
+  context.fillStyle=accent;roundedRectPath(-2.35,-.15,4.42,.3,.14);context.fill();
+  context.fillStyle='rgba(255,255,255,.35)';roundedRectPath(-1.75,-.54,1.65,.18,.09);context.fill();
+  context.fillStyle='#17303a';context.beginPath();context.ellipse(-.48,0,.78,.42,0,0,Math.PI*2);context.fill();
+  context.fillStyle=accent;context.beginPath();context.arc(-.58,0,.29,0,Math.PI*2);context.fill();
+  context.fillStyle='#112631';roundedRectPath(-2.84,-1.06,.31,2.12,.12);context.fill();roundedRectPath(2.05,-1.2,.28,2.4,.12);context.fill();
+  context.fillStyle='rgba(255,255,255,.9)';roundedRectPath(2.34,-.16,.42,.32,.13);context.fill();
+  if(player){context.strokeStyle='#fff7a8';context.lineWidth=.18;context.setLineDash([.45,.28]);context.beginPath();context.ellipse(-.05,0,3.35,1.38,0,0,Math.PI*2);context.stroke();context.setLineDash([]);}context.restore();
 }
 function drawMinimap(width,height){
-  const track=state.track,box={x:width-210,y:115,w:185,h:130}; if(width<700)return;context.save();context.fillStyle='#070b10d9';context.fillRect(box.x,box.y,box.w,box.h);context.strokeStyle='#ffffff20';context.strokeRect(box.x,box.y,box.w,box.h);
-  const bw=track.bounds.maxX-track.bounds.minX,bh=track.bounds.maxY-track.bounds.minY,s=Math.min((box.w-24)/bw,(box.h-24)/bh),ox=box.x+(box.w-bw*s)/2,oy=box.y+(box.h-bh*s)/2;context.beginPath();track.points.forEach((p,i)=>{const x=ox+(p.x-track.bounds.minX)*s,y=oy+(p.y-track.bounds.minY)*s;i?context.lineTo(x,y):context.moveTo(x,y)});context.closePath();context.strokeStyle='#aeb7c0';context.lineWidth=2;context.stroke();
-  const dot=(car,color,r)=>{context.fillStyle=color;context.beginPath();context.arc(ox+(car.x-track.bounds.minX)*s,oy+(car.y-track.bounds.minY)*s,r,0,Math.PI*2);context.fill();};if(state.mode==='race')state.ai.forEach(car=>dot(car,car.color,2));dot(state.player,'#fff',3.5);context.restore();
+  const track=state.track,box={x:width-210,y:112,w:185,h:132}; if(width<700)return;context.save();context.fillStyle='rgba(249,255,253,.92)';roundedRectPath(box.x,box.y,box.w,box.h,18);context.fill();context.strokeStyle='rgba(255,255,255,.95)';context.lineWidth=3;context.stroke();context.fillStyle='rgba(10,82,93,.2)';roundedRectPath(box.x,box.y+box.h-5,box.w,9,5);context.fill();
+  const bw=track.bounds.maxX-track.bounds.minX,bh=track.bounds.maxY-track.bounds.minY,s=Math.min((box.w-28)/bw,(box.h-28)/bh),ox=box.x+(box.w-bw*s)/2,oy=box.y+(box.h-bh*s)/2;context.beginPath();track.points.forEach((p,i)=>{const x=ox+(p.x-track.bounds.minX)*s,y=oy+(p.y-track.bounds.minY)*s;i?context.lineTo(x,y):context.moveTo(x,y)});context.closePath();context.strokeStyle='#4d6775';context.lineWidth=5;context.stroke();context.strokeStyle='#fff';context.lineWidth=2;context.stroke();
+  const dot=(car,color,r)=>{context.fillStyle='#123d52';context.beginPath();context.arc(ox+(car.x-track.bounds.minX)*s,oy+(car.y-track.bounds.minY)*s,r+1.4,0,Math.PI*2);context.fill();context.fillStyle=color;context.beginPath();context.arc(ox+(car.x-track.bounds.minX)*s,oy+(car.y-track.bounds.minY)*s,r,0,Math.PI*2);context.fill();};if(state.mode==='race')state.ai.forEach(car=>dot(car,car.color,2.2));dot(state.player,'#ff6758',4);context.restore();
 }
 
 function frame(timestamp){
