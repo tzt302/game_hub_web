@@ -19,6 +19,35 @@ let activeFilter = 'all';
 let activePreviewCard = null;
 let closeTimer = null;
 
+function selectedLanguage() {
+  return window.TZT_I18N?.getLocale?.() || localStorage.getItem('tzt-game-language') || 'en';
+}
+
+function gameUrl(card) {
+  const url = new URL(card.dataset.gameHref || card.getAttribute('href'), window.location.href);
+  card.dataset.gameHref = `${url.pathname}${url.hash}`;
+  url.searchParams.set('lang', selectedLanguage());
+  return url.href;
+}
+
+function updateGameLinks() {
+  liveCards.forEach((card) => { card.href = gameUrl(card); });
+}
+
+function openGame(event, card) {
+  event.preventDefault();
+  const url = gameUrl(card);
+  if (card.dataset.gameId === 'poker') {
+    const popup = window.open('about:blank', '_blank');
+    if (!popup) { window.open(url, '_blank'); return; }
+    popup.document.open();
+    popup.document.write(`<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TZT GAME</title><script defer src="${new URL('games/shared/game-i18n.js', window.location.href).href}" data-game="poker"><\/script></head><body><script>location.replace(${JSON.stringify(url)})<\/script></body></html>`);
+    popup.document.close();
+    return;
+  }
+  window.open(url, '_blank', 'noopener');
+}
+
 function cancelPreviewClose() {
   window.clearTimeout(closeTimer);
 }
@@ -41,7 +70,7 @@ function showPreview(card) {
     span.textContent = feature;
     return span;
   }));
-  previewPlay.href = card.href;
+  previewPlay.href = gameUrl(card);
   previewPanel.setAttribute('aria-hidden', 'false');
   sideStack.classList.add('preview-open');
   document.body.classList.add('preview-visible');
@@ -99,10 +128,15 @@ liveCards.forEach((card) => {
   });
   card.addEventListener('blur', schedulePreviewClose);
   card.addEventListener('click', (event) => {
-    if (!touchLayout.matches) return;
+    if (!touchLayout.matches) { openGame(event, card); return; }
+    if (card.classList.contains('is-previewed')) { openGame(event, card); return; }
     event.preventDefault();
     showPreview(card);
   });
+});
+
+previewPlay.addEventListener('click', (event) => {
+  if (activePreviewCard) openGame(event, activePreviewCard);
 });
 
 previewPanel.addEventListener('mouseenter', cancelPreviewClose);
@@ -115,6 +149,9 @@ document.addEventListener('keydown', (event) => {
 });
 
 window.addEventListener('tzt-language-change', () => {
+  updateGameLinks();
   updateCatalog();
   if (activePreviewCard) showPreview(activePreviewCard);
 });
+
+updateGameLinks();
