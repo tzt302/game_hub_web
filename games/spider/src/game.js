@@ -26,6 +26,8 @@ let challengeStartedAt = performance.now();
 let elapsedSeconds = 0;
 let timerId = null;
 let dailyRecords = loadDailyRecords();
+let pointerDrag = null;
+let suppressClickUntil = 0;
 
 function formatDuration(totalSeconds) {
   const seconds = Math.max(0, Math.floor(totalSeconds));
@@ -64,7 +66,38 @@ function clearHighlights() {
   document.querySelectorAll(".hint-source,.hint-target").forEach((element) => element.classList.remove("hint-source", "hint-target"));
 }
 
-function render() {
+function cardRects() {
+  return new Map([...table.querySelectorAll(".card[data-card-id]")].map((card) => [card.dataset.cardId, card.getBoundingClientRect()]));
+}
+
+function animateLayout(before) {
+  if (!before.size || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  requestAnimationFrame(() => {
+    table.querySelectorAll(".card[data-card-id]").forEach((card) => {
+      const old = before.get(card.dataset.cardId);
+      if (!old) return;
+      const next = card.getBoundingClientRect();
+      const dx = old.left - next.left;
+      const dy = old.top - next.top;
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+      card.animate([
+        { transform: `translate(calc(-50% + ${dx}px), ${dy}px)`, zIndex: 80 },
+        { transform: "translate(-50%, 0)", zIndex: card.style.zIndex },
+      ], { duration: 210, easing: "cubic-bezier(.2,.8,.2,1)" });
+    });
+  });
+}
+
+function refreshSelection() {
+  table.querySelectorAll(".card.selected").forEach((card) => card.classList.remove("selected"));
+  if (!selected) return;
+  table.querySelectorAll(`.card[data-column="${selected.column}"]`).forEach((card) => {
+    if (Number(card.dataset.index) >= selected.index) card.classList.add("selected");
+  });
+}
+
+function render({ animate = false } = {}) {
+  const before = animate ? cardRects() : new Map();
   table.replaceChildren();
   game.columns.forEach((column, columnIndex) => {
     const columnElement = document.createElement("div");
@@ -77,6 +110,7 @@ function render() {
       cardElement.className = `card ${card.faceUp ? `face ${SUITS[card.suit].color}` : "back"}`;
       cardElement.dataset.column = columnIndex;
       cardElement.dataset.index = cardIndex;
+      cardElement.dataset.cardId = card.id;
       cardElement.style.setProperty("--top", `${cardTop(column, cardIndex)}px`);
       cardElement.style.zIndex = cardIndex + 1;
       if (selected?.column === columnIndex && cardIndex >= selected.index) cardElement.classList.add("selected");
@@ -104,6 +138,7 @@ function render() {
   const level = LEVELS[game.level];
   difficultyLabel.textContent = dailyMode ? `每日挑战 · ${level.detail}` : `${level.label} · ${level.detail}`;
   completedRuns.innerHTML = game.completed.map((suit) => `<span>${SUITS[suit].symbol}<i>K—A</i></span>`).join("");
+  animateLayout(before);
 }
 
 function setMessage(text, tone = "normal") {
@@ -119,7 +154,7 @@ function chooseCard(column, index) {
   }
   selected = { column, index };
   setMessage("已选中牌组，请点击目标列", "active");
-  render();
+  refreshSelection();
 }
 
 function tryMove(targetColumn) {
@@ -128,7 +163,7 @@ function tryMove(targetColumn) {
   selected = null;
   if (!moved) setMessage("目标牌必须比移动牌大一点，空列则可以放任意牌", "warn");
   else setMessage(game.won ? "八组牌全部完成！" : "移动成功", "success");
-  render();
+  render({ animate: moved });
   if (game.won) {
     elapsedSeconds = Math.max(1, Math.floor((performance.now() - challengeStartedAt) / 1000));
     clearInterval(timerId);
@@ -145,6 +180,7 @@ function tryMove(targetColumn) {
 }
 
 table.addEventListener("click", (event) => {
+  if (performance.now() < suppressClickUntil) return;
   const columnElement = event.target.closest(".column");
   const cardElement = event.target.closest(".card");
   if (!columnElement) return;
@@ -154,6 +190,61 @@ table.addEventListener("click", (event) => {
     return;
   }
   if (cardElement) chooseCard(column, Number(cardElement.dataset.index));
+});
+
+function removeDragGhost() {
+  document.querySelector(".drag-stack")?.remove();
+  table.querySelectorAll(".drag-over").forEach((column) => column.classList.remove("drag-over"));
+}
+
+table.addEventListener("pointerdown", (event) => {
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+  const card = event.target.closest(".card.face");
+  if (!card) return;
+  const column = Number(card.dataset.column);
+  const index = Number(card.dataset.index);
+  if (!game.canSelect(column, index)) return;
+  pointerDrag = { pointerId: event.pointerId, column, index, x: event.clientX, y: event.clientY, active: false };
+  card.setPointerCapture?.(event.pointerId);
+});
+
+table.addEventListener("pointermove", (event) => {
+  if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+  const distance = Math.hypot(event.clientX - pointerDrag.x, event.clientY - pointerDrag.y);
+  if (!pointerDrag.active && distance < 7) return;
+  if (!pointerDrag.active) {
+    pointerDrag.active = true;
+    selected = { column: pointerDrag.column, index: pointerDrag.index };
+    refreshSelection();
+    const ghost = document.createElement("div");
+    ghost.className = "drag-stack";
+    ghost.innerHTML = `<strong>${game.columns[pointerDrag.column].length - pointerDrag.index}</strong><span>张</span>`;
+    document.body.append(ghost);
+  }
+  event.preventDefault();
+  const ghost = document.querySelector(".drag-stack");
+  if (ghost) ghost.style.transform = `translate3d(${event.clientX}px,${event.clientY}px,0)`;
+  table.querySelectorAll(".drag-over").forEach((column) => column.classList.remove("drag-over"));
+  document.elementFromPoint(event.clientX, event.clientY)?.closest(".column")?.classList.add("drag-over");
+});
+
+function finishPointerDrag(event) {
+  if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+  const wasActive = pointerDrag.active;
+  pointerDrag = null;
+  if (!wasActive) return;
+  event.preventDefault();
+  suppressClickUntil = performance.now() + 350;
+  const target = document.elementFromPoint(event.clientX, event.clientY)?.closest(".column");
+  removeDragGhost();
+  if (target) tryMove(Number(target.dataset.column));
+  else { selected = null; refreshSelection(); setMessage("把牌拖到目标列即可移动", "active"); }
+}
+
+table.addEventListener("pointerup", finishPointerDrag);
+table.addEventListener("pointercancel", (event) => {
+  if (!pointerDrag || pointerDrag.pointerId !== event.pointerId) return;
+  pointerDrag = null; selected = null; removeDragGhost(); refreshSelection();
 });
 
 table.addEventListener("dragstart", (event) => {
@@ -184,7 +275,7 @@ stockButton.addEventListener("click", () => {
   if (!game.canDeal()) return setMessage("补牌前，每一列都必须至少有一张牌", "warn");
   game.deal();
   setMessage("已向每列补发一张牌", "success");
-  render();
+  render({ animate: true });
 });
 
 document.querySelector("#hintButton").addEventListener("click", () => {

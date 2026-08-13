@@ -594,6 +594,8 @@ body {
 }
 .seat-river .latest-discard { box-shadow: 0 3px 0 #54c5b3,0 0 0 3px #fff08d,0 0 15px rgba(255,226,83,.75); }
 .seat-river .riichi-discard { box-shadow: 0 3px 0 #54c5b3,0 0 0 3px #ff7063,0 0 15px rgba(255,89,77,.58); }
+
+.hand .tile{touch-action:manipulation;will-change:transform;transition:transform .12s cubic-bezier(.2,.8,.2,1),filter .12s,box-shadow .12s}.hand:not(.hand-lock) .tile:active{transform:translateY(-11px) scale(1.025);filter:brightness(1.04)}.hand.discard-in-flight{pointer-events:none}.hand .tile.discarding{z-index:20}
 .meld-group,.settlement-meld { background: rgba(248,255,252,.9); box-shadow: 0 5px 0 rgba(7,102,98,.18); }
 .table-callout,.meld-callout,.action-callout { background: radial-gradient(circle,rgba(255,248,187,.52),rgba(10,114,103,.76)); }
 .riichi-callout { background: linear-gradient(90deg,transparent 0 8%,rgba(255,100,87,.9) 24% 76%,transparent 92%),radial-gradient(circle,transparent,rgba(6,103,95,.72)); }
