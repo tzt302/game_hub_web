@@ -1,6 +1,6 @@
 1:"$Sreact.fragment"
-2:I[82723,["/games/poker/_next/static/chunks/0os4r2b_q-rny.js","/games/poker/_next/static/chunks/0e~.m4ai6ig4a.js"],"default"]
+2:I[82723,["/games/poker/_next/static/chunks/0os4r2b_q-rny.js","/games/poker/_next/static/chunks/189o20x6nka_h.js"],"default"]
 3:I[84080,["/games/poker/_next/static/chunks/0os4r2b_q-rny.js"],"OutletBoundary"]
 4:"$Sreact.suspense"
-0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{}],[["$","script","script-0",{"src":"/games/poker/_next/static/chunks/0e~.m4ai6ig4a.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"Tcbwaw_pCeJ6Cj0lycgFI"}
+0:{"rsc":["$","$1","c",{"children":[["$","$L2",null,{}],[["$","script","script-0",{"src":"/games/poker/_next/static/chunks/189o20x6nka_h.js","async":true}]],["$","$L3",null,{"children":["$","$4",null,{"name":"Next.MetadataOutlet","children":"$@5"}]}]]}],"isPartial":false,"staleTime":300,"varyParams":null,"buildId":"vaZvgNORwY93E7l21JWPi"}
 5:null

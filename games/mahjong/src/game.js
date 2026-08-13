@@ -22,6 +22,18 @@ const WIND_LABELS = ['东', '南', '西', '北'];
 const NUMBER_LABELS = ['一', '二', '三', '四'];
 let tableActionTimer = null;
 const CALL_ANIMATION_MS = 1250;
+let analysisCache = { key: '', value: [] };
+let discardAnimating = false;
+
+function currentAnalysis(meldCount = state.melds[0]?.length || 0) {
+  const visible = allVisible();
+  const key = `${state.hands[0]?.join(',') || ''}|${visible.join(',')}|${state.playerCount}|${meldCount}`;
+  if (analysisCache.key !== key) analysisCache = {
+    key,
+    value: analyzeDiscards(state.hands[0], visible, state.playerCount, meldCount),
+  };
+  return analysisCache.value;
+}
 
 document.querySelectorAll('[data-group]').forEach(group => {
   group.addEventListener('click', event => {
@@ -191,16 +203,16 @@ function takeTurn(player) {
     state.waitingForDiscard = true;
     handEl.classList.remove('hand-lock');
     renderHand(); updateCoach();
-    const canRiichi = analyzeDiscards(state.hands[0], allVisible(), state.playerCount, state.melds[0].length).some(item => item.shanten === 0);
+    const canRiichi = currentAnalysis().some(item => item.shanten === 0);
     $('#riichiButton').classList.toggle('hidden', !canRiichi || state.riichi[0] || state.scores[0] < 1000 || state.melds[0].length > 0);
     setMessage(state.riichi[0] ? '立直中：请选择摸切牌' : '你的回合：选择一张牌打出');
   } else setTimeout(() => opponentDiscard(player), 380);
 }
 
-function discardHuman(index) {
-  if (!state.waitingForDiscard || state.over) return;
+function discardHuman(index, element) {
+  if (!state.waitingForDiscard || state.over || discardAnimating) return;
   const legalRiichiTiles = state.riichi[0] && state.riichiDiscardAt[0] < 0
-    ? analyzeDiscards(state.hands[0], allVisible(), state.playerCount, 0).filter(item => item.shanten === 0).map(item => item.discard)
+    ? currentAnalysis(0).filter(item => item.shanten === 0).map(item => item.discard)
     : [];
   const legalDiscard = canDiscardAfterRiichi({
     riichi: state.riichi[0], riichiDiscardAt: state.riichiDiscardAt[0], index,
@@ -211,7 +223,24 @@ function discardHuman(index) {
       ? '立直宣言后，只能打出保持听牌的牌'
       : '立直后必须摸切刚摸到的牌');
   }
+  discardAnimating = true;
+  state.waitingForDiscard = false;
+  handEl.classList.add('hand-lock', 'discard-in-flight');
+  element?.classList.add('discarding');
+  const finish = () => commitHumanDiscard(index);
+  if (element?.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const animation = element.animate([
+      { transform: 'translateY(-8px) scale(1.02)', opacity: 1 },
+      { transform: 'translateY(-42px) scale(.96)', opacity: 0 },
+    ], { duration: 145, easing: 'cubic-bezier(.25,.8,.25,1)', fill: 'forwards' });
+    animation.finished.then(finish, finish);
+  } else setTimeout(finish, 70);
+}
+
+function commitHumanDiscard(index) {
   const tile = state.hands[0].splice(index, 1)[0];
+  discardAnimating = false;
+  handEl.classList.remove('discard-in-flight');
   state.rinshan[0] = false;
   sortHand(state.hands[0]);
   state.rivers[0].push(tile);
@@ -360,7 +389,8 @@ function performHumanCall(call) {
   const method = ({ chi: '吃', pon: '碰', kan: '杠' })[call.type];
   showTableAction(method, 0, call.type.toUpperCase(), { from, tile: calledTile });
   state.turn = 0;
-  state.waitingForDiscard = false;
+  discardAnimating = false;
+  handEl.classList.remove('discard-in-flight');
   handEl.classList.add('hand-lock');
   renderHand();
   if (call.type === 'kan') return setTimeout(() => takeKanReplacement(0), CALL_ANIMATION_MS);
@@ -704,9 +734,10 @@ function tileElement(tile, options = {}) {
 
 function renderHand(animateDeal = false) {
   handEl.innerHTML = '';
-  const best = state.mode === 'coach' && state.waitingForDiscard ? analyzeDiscards(state.hands[0], allVisible(), state.playerCount, state.melds[0].length)[0]?.discard : null;
+  const analysis = state.waitingForDiscard ? currentAnalysis() : [];
+  const best = state.mode === 'coach' ? analysis[0]?.discard : null;
   const legalRiichiTiles = state.riichi[0] && state.riichiDiscardAt[0] < 0
-    ? analyzeDiscards(state.hands[0], allVisible(), state.playerCount, 0).filter(item => item.shanten === 0).map(item => item.discard)
+    ? currentAnalysis(0).filter(item => item.shanten === 0).map(item => item.discard)
     : [];
   state.hands[0].forEach((tile, index) => {
     const element = tileElement(tile, { drawn: index === state.lastDrawnIndex, recommended: tile === best, entering: animateDeal });
@@ -719,7 +750,7 @@ function renderHand(animateDeal = false) {
       element.classList.add('tile-locked');
       element.title = `${TILE_LABELS[tile]}（立直后不可打出）`;
     }
-    element.addEventListener('click', () => discardHuman(index));
+    element.addEventListener('click', () => discardHuman(index, element));
     handEl.appendChild(element);
   });
 }
@@ -814,7 +845,7 @@ function updateCoach() {
     container.innerHTML = '<p class="coach-lead">等待你的下一次摸牌…</p>';
     return;
   }
-  const recommendations = analyzeDiscards(state.hands[0], allVisible(), state.playerCount, state.melds[0].length).slice(0, 3);
+  const recommendations = currentAnalysis().slice(0, 3);
   container.innerHTML = '';
   recommendations.forEach((rec, index) => {
     const item = document.createElement('div');
