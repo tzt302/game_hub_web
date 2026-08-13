@@ -129,6 +129,29 @@ export class SpiderGame {
     return true;
   }
 
+  snapshot() {
+    return structuredClone({
+      level: this.level,
+      columns: this.columns,
+      stock: this.stock,
+      completed: this.completed,
+      moves: this.moves,
+      won: this.won,
+    });
+  }
+
+  restore(snapshot) {
+    if (!snapshot) return false;
+    const state = structuredClone(snapshot);
+    this.level = state.level;
+    this.columns = state.columns;
+    this.stock = state.stock;
+    this.completed = state.completed;
+    this.moves = state.moves;
+    this.won = state.won;
+    return true;
+  }
+
   hints() {
     const hints = [];
     this.columns.forEach((column, from) => {

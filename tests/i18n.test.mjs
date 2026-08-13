@@ -11,7 +11,7 @@ test('ships all requested languages with complete lobby copy', () => {
     const dictionary = i18n.translations[locale];
     assert.ok(dictionary, `missing ${locale}`);
     for (const key of requiredUi) assert.ok(dictionary.ui[key], `${locale} missing ${key}`);
-    for (const game of ['mahjong','racing','poker']) {
+    for (const game of ['mahjong','racing','poker','spider','minesweeper','2048']) {
       assert.ok(dictionary.games[game].title, `${locale} missing ${game} title`);
       assert.equal(dictionary.games[game].features.length, 3, `${locale} ${game} feature count`);
     }
