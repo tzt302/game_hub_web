@@ -1,0 +1,9 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#25d7cc"><title>2048 · TZT 游戏</title><link rel="stylesheet" href="styles.css"></head>
+<body><main class="shell">
+  <header><a href="../../" class="brand">← <span>返回大厅</span></a><div><small>数字合成游戏</small><h1>2048</h1></div><button id="newGame">新游戏</button></header>
+  <section class="scorebar"><div><span>分数</span><strong id="score">0</strong></div><div><span>最佳</span><strong id="best">0</strong></div><button id="undo" disabled>↶ 悔棋</button></section>
+  <section class="play-card"><p id="message">滑动数字，相同方块会合并</p><div id="board" class="board" aria-label="2048 棋盘"><div class="grid-bg"></div><div class="tiles" id="tiles"></div></div>
+    <div class="mouse-pad" aria-label="鼠标方向控制"><button data-direction="up">▲</button><button data-direction="left">◀</button><button data-direction="down">▼</button><button data-direction="right">▶</button></div>
+  </section>
+  <aside class="instructions"><b>玩法说明</b><p><strong>手机：</strong>在棋盘上向任意方向滑动。</p><p><strong>电脑：</strong>使用方向键 / WASD，拖动棋盘，或点击方向按钮。</p><p>合并相同数字并尽量得到 2048；悔棋可撤销上一步。</p></aside>
+</main><script defer src="../shared/game-i18n.js" data-game="2048"></script><script type="module" src="game.js"></script></body></html>

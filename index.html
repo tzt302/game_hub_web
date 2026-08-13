@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#25d9cc">
-    <title>TZT GAME｜免费网页小游戏：日麻、赛车、德州扑克</title>
-    <meta name="description" content="TZT GAME 是一个无需安装的免费网页小游戏大厅，可直接游玩四人及三人日式麻将、方程式赛车和单机德州扑克 AI 对战。">
+    <title>TZT GAME｜免费网页小游戏：日麻、赛车、德扑、纸牌、扫雷与 2048</title>
+    <meta name="description" content="TZT GAME 是一个无需安装的免费网页小游戏大厅，可直接游玩日式麻将、方程式赛车、单机德扑、蜘蛛纸牌、扫雷与 2048。">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://tztgame.com/">
     <meta property="og:type" content="website">
@@ -62,7 +62,7 @@
               <option value="pt">Português</option>
             </select>
           </label>
-          <span class="online-pill"><i></i><span data-i18n="online">4 款在线</span></span>
+          <span class="online-pill"><i></i><span data-i18n="online">6 款在线</span></span>
           <a class="mail-button" href="mailto:tzt321nice@gmail.com" aria-label="联系作者" data-i18n-aria="navContact">✉</a>
         </div>
       </header>
@@ -84,7 +84,7 @@
           <section class="game-area" aria-labelledby="featuredTitle">
             <div class="section-title">
               <div><span data-i18n="featuredKicker">FEATURED GAMES</span><h2 id="featuredTitle" data-i18n="featuredTitle">推荐游戏</h2></div>
-              <p><b>4</b> <span data-i18n="playable">款可以立即游玩</span></p>
+              <p><b>6</b> <span data-i18n="playable">款可以立即游玩</span></p>
             </div>
 
             <div class="game-grid" id="gameGrid">
@@ -107,8 +107,14 @@
                 <img src="assets/spider-cartoon-v1.svg" alt="蜘蛛纸牌卡通游戏封面">
                 <div class="game-info"><small>纸牌 · 策略</small><h3>蜘蛛纸牌</h3><p>三档难度与每日挑战</p><b>开始游戏 <i>▶</i></b></div>
               </a>
-              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
-              <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
+              <a class="game-card game-live" data-game-id="minesweeper" style="--card-accent:#ff9d70" data-category="strategy" data-name="扫雷 逻辑 地雷 益智" data-preview-category="逻辑 · 益智" data-preview-description="经典扫雷，提供三档标准难度、首格安全和方便的手机插旗模式。" data-preview-features="三档标准难度|手机长按与模式插旗|电脑左右键操作" href="games/minesweeper/" target="_blank" rel="noopener noreferrer">
+                <img src="assets/minesweeper-cartoon-v1.svg" alt="扫雷卡通游戏封面">
+                <div class="game-info"><small>逻辑 · 益智</small><h3>扫雷</h3><p>三档难度与便捷插旗</p><b>开始游戏 <i>▶</i></b></div>
+              </a>
+              <a class="game-card game-live" data-game-id="2048" style="--card-accent:#ffca55" data-category="strategy" data-name="2048 数字 合成 益智" data-preview-category="数字 · 益智" data-preview-description="丝滑的数字合成游戏，支持手机滑动、电脑键盘和鼠标操作，并可随时悔棋。" data-preview-features="手机流畅滑动|键盘与鼠标控制|无限局数悔棋" href="games/2048/" target="_blank" rel="noopener noreferrer">
+                <img src="assets/2048-cartoon-v1.svg" alt="2048 卡通游戏封面">
+                <div class="game-info"><small>数字 · 益智</small><h3>2048</h3><p>丝滑合成与随时悔棋</p><b>开始游戏 <i>▶</i></b></div>
+              </a>
               <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
               <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
               <article class="game-card game-upcoming reserved" data-game-id="reserved" data-category="future" data-name="预留位置 敬请期待"><div class="placeholder-art">＋</div><span>预留位置</span><h3>敬请期待</h3><p>未来游戏将在这里出现</p></article>
@@ -126,7 +132,7 @@
               <button class="filter-button" data-filter="table"><i>🀄</i><span><b data-i18n="tableGames">棋牌游戏</b><small data-i18n="tableSub">麻将与卡牌</small></span></button>
               <button class="filter-button" data-filter="racing"><i>🏎️</i><span><b data-i18n="racingGames">竞速游戏</b><small data-i18n="racingSub">速度与赛道</small></span></button>
               <button class="filter-button" data-filter="strategy"><i>🧠</i><span><b data-i18n="strategyGames">策略游戏</b><small data-i18n="strategySub">思考与挑战</small></span></button>
-              <button class="filter-button" data-filter="future"><i>✨</i><span><b data-i18n="comingSoon">即将上线</b><small data-i18n="futureSlots">8 个预留位置</small></span></button>
+              <button class="filter-button" data-filter="future"><i>✨</i><span><b data-i18n="comingSoon">即将上线</b><small data-i18n="futureSlots">6 个预留位置</small></span></button>
               <div class="rail-note"><strong data-i18n="updates">持续更新</strong><p data-i18n="updateBody">新游戏完成后会自动出现在这里。</p></div>
             </div>
 

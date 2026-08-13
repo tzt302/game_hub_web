@@ -1,0 +1,10 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#25d7cc"><title>扫雷 · TZT 游戏</title><link rel="stylesheet" href="styles.css"></head>
+<body><style>@media(max-width:650px){.board{--cell:32px}}</style><main class="shell">
+ <header><a class="back" href="../../">← <span>返回大厅</span></a><div><small>经典逻辑游戏</small><h1>扫雷</h1></div><button id="newGame">新游戏</button></header>
+ <section class="difficulty" role="group" aria-label="选择难度"><button class="active" data-level="easy">简单<small>9 × 9 · 10 雷</small></button><button data-level="medium">中等<small>16 × 16 · 40 雷</small></button><button data-level="hard">困难<small>30 × 16 · 99 雷</small></button></section>
+ <section class="panel"><div class="status"><div><span>剩余雷数</span><strong id="remaining">10</strong></div><p id="message">首格一定安全，放心开始</p><div><span>用时</span><strong id="time">000</strong></div></div>
+  <div class="mobile-modes" role="group" aria-label="手机操作模式"><button class="active" data-mode="reveal">☝ 翻开</button><button data-mode="flag">🚩 插旗</button></div>
+  <div class="board-scroll"><div id="board" class="board" aria-label="扫雷棋盘"></div></div>
+ </section>
+ <aside class="instructions"><b>玩法说明</b><p><strong>电脑：</strong>鼠标左键翻开，右键插旗或取消旗帜。</p><p><strong>手机：</strong>点击“翻开 / 插旗”切换操作；也可以长按任意格直接插旗。</p><p>数字表示周围八格的地雷数量，找出所有安全格即可获胜。</p></aside>
+</main><script defer src="../shared/game-i18n.js" data-game="minesweeper"></script><script type="module" src="game.js"></script></body></html>

@@ -16,6 +16,7 @@ const elapsedTime = document.querySelector("#elapsedTime");
 const dailyButton = document.querySelector("#dailyButton");
 const dailyStatus = document.querySelector("#dailyStatus");
 const dailyRecordsHost = document.querySelector("#dailyRecords");
+const undoButton = document.querySelector("#undoButton");
 
 let game = new SpiderGame("easy");
 let selected = null;
@@ -28,6 +29,7 @@ let timerId = null;
 let dailyRecords = loadDailyRecords();
 let pointerDrag = null;
 let suppressClickUntil = 0;
+let history = [];
 
 function formatDuration(totalSeconds) {
   const seconds = Math.max(0, Math.floor(totalSeconds));
@@ -135,6 +137,7 @@ function render({ animate = false } = {}) {
   stockCount.textContent = game.stock.length;
   stockButton.disabled = game.stock.length === 0;
   stockButton.classList.toggle("empty", game.stock.length === 0);
+  undoButton.disabled = history.length === 0;
   const level = LEVELS[game.level];
   difficultyLabel.textContent = dailyMode ? `每日挑战 · ${level.detail}` : `${level.label} · ${level.detail}`;
   completedRuns.innerHTML = game.completed.map((suit) => `<span>${SUITS[suit].symbol}<i>K—A</i></span>`).join("");
@@ -159,10 +162,14 @@ function chooseCard(column, index) {
 
 function tryMove(targetColumn) {
   if (!selected) return false;
+  const beforeMove = game.snapshot();
   const moved = game.move(selected.column, selected.index, targetColumn);
   selected = null;
   if (!moved) setMessage("目标牌必须比移动牌大一点，空列则可以放任意牌", "warn");
-  else setMessage(game.won ? "八组牌全部完成！" : "移动成功", "success");
+  else {
+    history.push(beforeMove);
+    setMessage(game.won ? "八组牌全部完成！" : "移动成功", "success");
+  }
   render({ animate: moved });
   if (game.won) {
     elapsedSeconds = Math.max(1, Math.floor((performance.now() - challengeStartedAt) / 1000));
@@ -273,8 +280,19 @@ stockButton.addEventListener("click", () => {
   selected = null;
   if (!game.stock.length) return setMessage("牌已经全部发完了", "warn");
   if (!game.canDeal()) return setMessage("补牌前，每一列都必须至少有一张牌", "warn");
+  history.push(game.snapshot());
   game.deal();
   setMessage("已向每列补发一张牌", "success");
+  render({ animate: true });
+});
+
+undoButton.addEventListener("click", () => {
+  const previous = history.pop();
+  if (!previous) return;
+  game.restore(previous);
+  selected = null;
+  dialog.hidden = true;
+  setMessage("已撤销上一步", "active");
   render({ animate: true });
 });
 
@@ -309,6 +327,7 @@ function start(level, options = {}) {
   game = new SpiderGame(level, options.random || Math.random);
   selected = null;
   hintIndex = 0;
+  history = [];
   dialog.hidden = true;
   dailyButton.classList.toggle("active", dailyMode);
   levelButtons.forEach(button => { button.disabled = dailyMode; });
