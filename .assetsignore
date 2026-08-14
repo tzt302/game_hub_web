@@ -1,0 +1,14 @@
+worker/
+migrations/
+tests/
+wrangler.jsonc
+package.json
+package-lock.json
+.git/
+.gitignore
+.assetsignore
+README.md
+node_modules/
+.wrangler/
+pnpm-lock.yaml
+pnpm-workspace.yaml

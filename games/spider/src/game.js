@@ -1,5 +1,6 @@
 import { LEVELS, SUITS, SpiderGame, rankLabel } from "./engine.js";
 import { dailyDateKey, hashSeed, loadDailyRecords, recordDailyCompletion, saveDailyRecords, seededRandom } from "./daily.js";
+import { initGlobalLeaderboard } from "../../shared/leaderboard.js";
 
 const table = document.querySelector("#tableau");
 const levelButtons = [...document.querySelectorAll(".level")];
@@ -30,6 +31,8 @@ let dailyRecords = loadDailyRecords();
 let pointerDrag = null;
 let suppressClickUntil = 0;
 let history = [];
+let globalRunId = `spider-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+const worldBoard = initGlobalLeaderboard({ gameId:"spider", mode:"easy", title:"蜘蛛纸牌全球速度榜" });
 
 function formatDuration(totalSeconds) {
   const seconds = Math.max(0, Math.floor(totalSeconds));
@@ -180,6 +183,12 @@ function tryMove(targetColumn) {
       dailyRecords = saveDailyRecords(dailyRecords);
       renderDailyRecords();
     }
+    worldBoard.submit({
+      durationMs:elapsedSeconds * 1000,
+      runId:globalRunId,
+      mode:dailyMode ? `daily:${dailyDateKey()}` : game.level,
+      metadata:{ moves:game.moves, difficulty:game.level, daily:dailyMode },
+    });
     winSummary.textContent = `${dailyMode ? "每日挑战" : `${LEVELS[game.level].label}难度`} · ${game.moves} 步 · ${formatDuration(elapsedSeconds)}`;
     dialog.hidden = false;
   }
@@ -324,6 +333,7 @@ function start(level, options = {}) {
   clearTimeout(hintTimer);
   clearHighlights();
   dailyMode = Boolean(options.daily);
+  globalRunId = `spider-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
   game = new SpiderGame(level, options.random || Math.random);
   selected = null;
   hintIndex = 0;
@@ -335,6 +345,7 @@ function start(level, options = {}) {
   setMessage(dailyMode ? "今日固定牌局 · 按完成速度进入排行榜" : "把同花色的 K 到 A 连成完整序列");
   startClock();
   render();
+  worldBoard.setMode(dailyMode ? `daily:${dailyDateKey()}` : level);
 }
 
 function startDaily() {

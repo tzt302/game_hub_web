@@ -1,0 +1,13 @@
+{
+  "name": "tzt-game-hub",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/i18n.test.mjs tests/leaderboard-rules.test.mjs games/2048/tests/engine.test.mjs games/2048/tests/records.test.mjs games/minesweeper/tests/daily.test.mjs games/minesweeper/tests/engine.test.mjs games/racing/tests/core.test.js games/spider/tests/undo.test.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.118.0"
+  }
+}
