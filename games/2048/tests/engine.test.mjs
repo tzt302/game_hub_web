@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { addRandomTile, canMove, emptyGrid, moveGrid, slideLine } from '../engine.js';
+import { addRandomTile, canMove, emptyGrid, moveGrid, moveGridWithMotion, slideLine } from '../engine.js';
 
 test('merges each pair only once per move',()=>{
   assert.deepEqual(slideLine([2,2,2,2]),{line:[4,4,0,0],gained:8});
@@ -16,4 +16,12 @@ test('moves in all four directions',()=>{
 test('adds one tile and detects a locked board',()=>{
   assert.equal(addRandomTile(emptyGrid(),()=>0).flat().filter(Boolean).length,1);
   assert.equal(canMove([[2,4,2,4],[4,2,4,2],[2,4,2,4],[4,2,4,2]]),false);
+});
+test('reports exact motion paths and merge destinations',()=>{
+  const result=moveGridWithMotion([[2,0,2,4],[0,0,0,0],[0,0,0,0],[0,0,0,0]],'left');
+  assert.deepEqual(result.grid[0],[4,4,0,0]);
+  assert.deepEqual(result.merges,[[0,0]]);
+  assert.deepEqual(result.motions.slice(0,2).map(({from,to,merge})=>({from,to,merge})),[
+    {from:[0,0],to:[0,0],merge:true},{from:[0,2],to:[0,0],merge:true}
+  ]);
 });
