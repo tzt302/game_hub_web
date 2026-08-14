@@ -1,0 +1,3 @@
+import test from'node:test';import assert from'node:assert/strict';import{normalizeScores,recordScore}from'../records.js';
+test('updates one run without duplicating or lowering its peak',()=>{let records=recordScore([],{id:'run-1',score:32,maxTile:8});records=recordScore(records,{id:'run-1',score:80,maxTile:16});records=recordScore(records,{id:'run-1',score:48,maxTile:8});assert.equal(records.length,1);assert.equal(records[0].score,80)});
+test('sorts descending and keeps ten runs',()=>{const records=normalizeScores(Array.from({length:14},(_,index)=>({id:String(index),score:index+1,maxTile:2})));assert.equal(records.length,10);assert.equal(records[0].score,14);assert.equal(records.at(-1).score,5)});
