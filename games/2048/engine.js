@@ -16,17 +16,42 @@ export function slideLine(line) {
   return { line: result, gained };
 }
 
-function rotate(grid) { return grid[0].map((_, column) => grid.map(row => row[column]).reverse()); }
-function rotateTimes(grid, times) { let result = grid.map(row => [...row]); for (let i = 0; i < times; i += 1) result = rotate(result); return result; }
-
 export function moveGrid(grid, direction) {
-  const turns = { left: 0, down: 1, right: 2, up: 3 }[direction];
-  if (turns === undefined) return { grid, moved: false, gained: 0 };
-  const oriented = rotateTimes(grid, turns);
+  const result = moveGridWithMotion(grid, direction);
+  return { grid: result.grid, gained: result.gained, moved: result.moved };
+}
+
+export function moveGridWithMotion(grid, direction) {
+  if (!["left","right","up","down"].includes(direction)) return { grid, moved: false, gained: 0, motions: [], merges: [] };
+  const lines = Array.from({ length: 4 }, (_, line) => Array.from({ length: 4 }, (_, offset) => {
+    if (direction === "left") return [line, offset];
+    if (direction === "right") return [line, 3 - offset];
+    if (direction === "up") return [offset, line];
+    return [3 - offset, line];
+  }));
+  const result = emptyGrid();
+  const motions = [];
+  const merges = [];
   let gained = 0;
-  const movedGrid = oriented.map(row => { const moved = slideLine(row); gained += moved.gained; return moved.line; });
-  const result = rotateTimes(movedGrid, (4 - turns) % 4);
-  return { grid: result, gained, moved: JSON.stringify(result) !== JSON.stringify(grid) };
+  lines.forEach((coordinates) => {
+    const occupied = coordinates.filter(([row, col]) => grid[row][col]).map(([row, col]) => ({ row, col, value: grid[row][col] }));
+    let destination = 0;
+    for (let index = 0; index < occupied.length; index += 1) {
+      const first = occupied[index];
+      const second = occupied[index + 1];
+      const [toRow, toCol] = coordinates[destination];
+      if (second && first.value === second.value) {
+        result[toRow][toCol] = first.value * 2;
+        motions.push({ from:[first.row,first.col], to:[toRow,toCol], value:first.value, merge:true }, { from:[second.row,second.col], to:[toRow,toCol], value:second.value, merge:true });
+        merges.push([toRow,toCol]); gained += first.value * 2; index += 1;
+      } else {
+        result[toRow][toCol] = first.value;
+        motions.push({ from:[first.row,first.col], to:[toRow,toCol], value:first.value, merge:false });
+      }
+      destination += 1;
+    }
+  });
+  return { grid: result, gained, motions, merges, moved: JSON.stringify(result) !== JSON.stringify(grid) };
 }
 
 export function addRandomTile(grid, random = Math.random) {
