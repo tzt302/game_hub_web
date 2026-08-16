@@ -119,9 +119,7 @@ export function initGlobalLeaderboard({ gameId, mode = "classic", title = "", fo
   host.className = "global-leaderboard global-leaderboard-prominent";
   host.innerHTML = `<header><div><small>🏆 WORLD RANKING</small><h2>${escapeHtml(title || t("global"))}</h2></div><button type="button" class="global-player-name">${escapeHtml(readProfile()?.player?.nickname || t("rename"))}</button></header><p class="global-board-status">${t("loading")}</p><ol class="global-board-list"></ol>`;
   const target = mount ? document.querySelector(mount) : document.querySelector("main");
-  const topbar = target?.querySelector(":scope > header");
-  if (topbar) topbar.insertAdjacentElement("afterend", host);
-  else target?.prepend(host);
+  target?.append(host);
   const list = host.querySelector("ol");
   const status = host.querySelector(".global-board-status");
   const nameButton = host.querySelector(".global-player-name");
