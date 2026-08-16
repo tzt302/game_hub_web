@@ -1,4 +1,4 @@
-import { GAME_RULES, isBetter, normalizeNickname, validateScorePayload } from "./rules.js";
+import { GAME_RULES, isBetter, normalizeNickname, validateFeedbackPayload, validateScorePayload } from "./rules.js";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 let schemaReady;
@@ -10,6 +10,9 @@ function ensureSchema(env) {
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_leaderboard_lookup ON leaderboard_entries(game_id, mode, value, achieved_at)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS score_submissions (id TEXT PRIMARY KEY, player_id TEXT NOT NULL, game_id TEXT NOT NULL, mode TEXT NOT NULL, run_id TEXT NOT NULL, value INTEGER NOT NULL, score INTEGER NOT NULL DEFAULT 0, duration_ms INTEGER NOT NULL DEFAULT 0, metadata TEXT NOT NULL DEFAULT '{}', submitted_at INTEGER NOT NULL, accepted INTEGER NOT NULL DEFAULT 0, FOREIGN KEY (player_id) REFERENCES players(id) ON DELETE CASCADE)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_submissions_player_time ON score_submissions(player_id, submitted_at DESC)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS feedback_messages (id TEXT PRIMARY KEY, category TEXT NOT NULL, message TEXT NOT NULL, contact TEXT NOT NULL DEFAULT '', locale TEXT NOT NULL, page TEXT NOT NULL, fingerprint_hash TEXT NOT NULL, created_at INTEGER NOT NULL)`),
+    env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_feedback_created ON feedback_messages(created_at DESC)`),
+    env.DB.prepare(`CREATE INDEX IF NOT EXISTS idx_feedback_rate ON feedback_messages(fingerprint_hash, created_at DESC)`),
   ]).catch(error => { schemaReady = undefined; throw error; });
   return schemaReady;
 }
@@ -26,6 +29,11 @@ function randomToken(bytes = 24) {
 async function hashToken(token) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
   return [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, "0")).join("");
+}
+
+async function clientFingerprint(request) {
+  const source = `${request.headers.get("CF-Connecting-IP") || "unknown"}|${request.headers.get("user-agent") || "unknown"}`;
+  return (await hashToken(source)).slice(0, 32);
 }
 
 async function readJson(request) {
@@ -78,6 +86,28 @@ async function updatePlayer(request, env, player) {
   await env.DB.prepare("UPDATE players SET nickname = ?1, updated_at = ?2 WHERE id = ?3")
     .bind(nickname, Date.now(), player.id).run();
   return json({ player: { id: player.id, nickname } });
+}
+
+async function submitFeedback(request, env) {
+  let entry;
+  try { entry = validateFeedbackPayload(await readJson(request)); }
+  catch (error) { return json({ error: error.message || "意见内容无效" }, 400); }
+  if (entry.website) return json({ accepted: true }, 201);
+
+  const now = Date.now();
+  const fingerprint = await clientFingerprint(request);
+  const rate = await env.DB.prepare(`SELECT COUNT(*) AS total, MAX(created_at) AS latest FROM feedback_messages
+    WHERE fingerprint_hash = ?1 AND created_at > ?2`).bind(fingerprint, now - 3_600_000).first();
+  if (Number(rate?.total || 0) >= 5 || (rate?.latest && now - Number(rate.latest) < 30_000)) {
+    return json({ error: "提交过于频繁，请稍后再试" }, 429);
+  }
+
+  const id = crypto.randomUUID();
+  await env.DB.prepare(`INSERT INTO feedback_messages
+    (id, category, message, contact, locale, page, fingerprint_hash, created_at)
+    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)`)
+    .bind(id, entry.category, entry.message, entry.contact, entry.locale, entry.page, fingerprint, now).run();
+  return json({ accepted: true, id }, 201);
 }
 
 async function submitScore(request, env, player) {
@@ -146,9 +176,10 @@ async function getLeaderboard(url, env) {
 
 async function handleApi(request, env) {
   const url = new URL(request.url);
-  if (request.method === "GET" && url.pathname === "/api/health") return json({ ok: true, version: 1 });
+  if (request.method === "GET" && url.pathname === "/api/health") return json({ ok: true, version: 2 });
   if (request.method === "GET" && url.pathname === "/api/leaderboard") return getLeaderboard(url, env);
   if (request.method === "POST" && url.pathname === "/api/players") return createPlayer(request, env);
+  if (request.method === "POST" && url.pathname === "/api/feedback") return submitFeedback(request, env);
 
   const player = await authenticate(request, env);
   if (!player) return json({ error: "玩家身份无效，请重新设置昵称" }, 401);

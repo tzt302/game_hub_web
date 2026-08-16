@@ -51,6 +51,29 @@ export function sanitizeMetadata(value) {
   return safe;
 }
 
+const FEEDBACK_CATEGORIES = new Set(["suggestion", "bug", "other"]);
+const FEEDBACK_LOCALES = new Set(["en", "ja", "fr", "es", "ru", "it", "ar", "ko", "zh-CN", "zh-TW", "pt"]);
+
+function cleanFeedbackText(value, limit) {
+  return String(value ?? "")
+    .normalize("NFKC")
+    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, "")
+    .trim()
+    .slice(0, limit);
+}
+
+export function validateFeedbackPayload(payload) {
+  const message = cleanFeedbackText(payload?.message, 1000);
+  if (message.length < 5) throw new Error("意见内容至少需要5个字符");
+  const category = FEEDBACK_CATEGORIES.has(payload?.category) ? payload.category : "other";
+  const contact = cleanFeedbackText(payload?.contact, 100).replace(/[<>]/g, "");
+  const locale = FEEDBACK_LOCALES.has(payload?.locale) ? payload.locale : "en";
+  const rawPage = cleanFeedbackText(payload?.page, 300);
+  const page = rawPage.startsWith("/") && !rawPage.startsWith("//") ? rawPage : "/";
+  const website = cleanFeedbackText(payload?.website, 200);
+  return { message, category, contact, locale, page, website };
+}
+
 export function isBetter(metric, candidate, current) {
   if (current == null) return true;
   return metric === "score" ? candidate > current : candidate < current;
