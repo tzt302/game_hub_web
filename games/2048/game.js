@@ -1,10 +1,10 @@
 import { addRandomTile, canMove, emptyGrid, moveGridWithMotion } from "./engine.js";import{loadScores,recordScore,saveScores}from"./records.js";
-import { hasGlobalPlayer, initGlobalLeaderboard } from "../shared/leaderboard.js";
+import { initGlobalLeaderboard } from "../shared/leaderboard.js";
 const board=document.querySelector("#board"),tiles=document.querySelector("#tiles"),scoreEl=document.querySelector("#score"),bestEl=document.querySelector("#best"),undoButton=document.querySelector("#undo"),message=document.querySelector("#message");
 let grid,score=0,history=[],gesture=null,best=Number(localStorage.getItem("tzt-2048-best")||0),animating=false,queuedDirection=null,records=loadScores(),runId="",tileSequence=0;const scoreRecords=document.querySelector("#scoreRecords");
 const worldBoard=initGlobalLeaderboard({gameId:"2048",mode:"classic",title:"2048 全球最高分榜",formatValue:value=>Number(value).toLocaleString()});
 let worldSubmitTimer=null;
-function submitWorldScore(immediate=false){if(!hasGlobalPlayer()||score<2)return;clearTimeout(worldSubmitTimer);const send=()=>worldBoard.submit({score,runId,metadata:{max_tile:Math.max(...grid.flat()),moves:history.length}});if(immediate)send();else worldSubmitTimer=setTimeout(send,1800)}
+function submitWorldScore(immediate=false){if(score<2)return;clearTimeout(worldSubmitTimer);const send=()=>worldBoard.submit({score,runId,metadata:{max_tile:Math.max(...grid.flat()),moves:history.length}});if(immediate)send();else worldSubmitTimer=setTimeout(send,1800)}
 bestEl.textContent=best;
 if(best>0&&!records.length)records=saveScores(recordScore(records,{id:"legacy-best",score:best,maxTile:2,achievedAt:""}));
 function renderRecords(){scoreRecords.innerHTML=records.length?records.map((item,index)=>`<li><i>${index+1}</i><div><strong>${item.score.toLocaleString()}</strong><small>最高方块 ${item.maxTile}</small></div><b>${index===0?"BEST":"#"+(index+1)}</b></li>`).join(""):'<li class="empty">完成合并后，这里会保存你的最高分</li>'}
