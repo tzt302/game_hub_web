@@ -1,0 +1,32 @@
+.tile {
+  transition: none !important;
+  backface-visibility: hidden;
+  contain: layout paint style;
+}
+
+@keyframes tile-pop-stable {
+  0% { transform: scale(.58); }
+  70% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+@keyframes tile-merge-stable {
+  0% { transform: scale(.9); }
+  55% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+@keyframes tile-restore-stable {
+  0% { transform: scale(.94); }
+  100% { transform: scale(1); }
+}
+
+.tile-new { animation: tile-pop-stable 240ms cubic-bezier(.18,.85,.28,1.25) !important; }
+.tile-merged { animation: tile-merge-stable 260ms cubic-bezier(.2,.82,.25,1.2) !important; }
+.tile-restored { animation: tile-restore-stable 170ms ease-out !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-new,
+  .tile-merged,
+  .tile-restored { animation: none !important; }
+}
