@@ -2,6 +2,7 @@ import { loadTracks, TRACK_ORDER, nearestIndex, progressScore } from './track.js
 import { Vehicle, PHYSICS } from './physics.js';
 import { AIDriver, AI_PROFILES } from './ai.js';
 import { readGamepad, recoverySnapshot } from './controls.js';
+import { initGlobalLeaderboard } from '../../shared/leaderboard.js';
 
 if (new URLSearchParams(window.location.search).has('embed')) document.body.classList.add('embed');
 
@@ -24,6 +25,8 @@ const state = {
   outside:false, warnings:0, penalty:0, noticeTimer:0, wrongWay:0, lapValid:true, gamepadReset:false, gamepadPause:false,
   raceClock:0, recoveryHistory:[], recoverySampleTimer:0, recovery:null
 };
+let globalRunId = `racing-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+const worldBoard = initGlobalLeaderboard({ gameId:'racing', mode:'time:loading', title:'赛车全球最快圈', formatValue:value=>formatTime(Number(value)/1000) });
 
 function resizeCanvas() {
   const rect = canvas.getBoundingClientRect(); const ratio = Math.min(2, window.devicePixelRatio || 1);
@@ -56,6 +59,7 @@ function placeCar(vehicle, gridPosition) {
 }
 
 function resetSession() {
+  globalRunId = `racing-${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
   const [body] = LIVERIES[state.livery]; state.player = new Vehicle(body, 'YOU');
   state.ai = AI_PROFILES.map(profile => new AIDriver(state.track, profile, state.difficulty));
   if (state.mode === 'race') {
@@ -73,6 +77,7 @@ function resetSession() {
 function startConfiguredSession() {
   state.track = state.tracks[ui.track.value]; state.mode = ui.mode.value; state.difficulty = ui.difficulty.value;
   state.viewScale = Number(ui.view.value); state.livery = ui.livery.value; resetSession();
+  worldBoard.setMode(`${state.mode}:${state.track.id}`);
   ui.guide.classList.add('hidden'); ui.menu.classList.add('hidden'); ui.hud.classList.remove('hidden'); state.phase = 'race'; canvas.focus();
 }
 
@@ -218,7 +223,7 @@ function updateTiming(previousIndex) {
 
 function completePlayerLap() {
   state.sectorTimes[2] = state.lapTime-(state.sectorTimes[0]||0)-(state.sectorTimes[1]||0);
-  if (state.lapValid&&state.currentTrace.some(Number.isFinite) && state.lapTime < state.bestLap) { state.bestLap = state.lapTime; state.bestTrace = completeTrace(state.currentTrace,state.lapTime); setNotice(`个人最快圈 ${formatTime(state.bestLap)}`); }
+  if (state.lapValid&&state.currentTrace.some(Number.isFinite) && state.lapTime < state.bestLap) { state.bestLap = state.lapTime; state.bestTrace = completeTrace(state.currentTrace,state.lapTime); setNotice(`个人最快圈 ${formatTime(state.bestLap)}`); worldBoard.submit({durationMs:Math.round(state.bestLap*1000),runId:globalRunId,mode:`${state.mode}:${state.track.id}`,metadata:{track:state.track.id,session_mode:state.mode,penalty:state.penalty}}); }
   else if(!state.lapValid)setNotice('无效圈 · 成绩未记录');
   state.lap += 1; state.lapTime = 0; state.sector = 0; state.sectorTimes = [null,null,null]; state.currentTrace = new Array(state.track.points.length).fill(null); state.delta = null;state.lapValid=true;
   if (state.lap > state.totalLaps) { state.lap = state.totalLaps; setNotice(`比赛完成 · 最快圈 ${formatTime(state.bestLap)}`,8); state.phase = 'paused'; ui.pause.classList.remove('hidden'); ui.pause.querySelector('h2').textContent = '比赛完成'; }
