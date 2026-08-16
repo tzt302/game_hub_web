@@ -15,8 +15,8 @@ const assert = require("node:assert/strict");
   await page.goto("http://127.0.0.1:8766/games/2048/");
   await page.evaluate(() => localStorage.removeItem("tzt-global-player-v1"));
   await page.reload();
-  assert.equal(await page.locator("main > header + .global-leaderboard-prominent").count(), 1);
-  assert.ok(await page.locator(".global-leaderboard-prominent").boundingBox().then(box => box.y < 200));
+  assert.equal(await page.locator("main > .global-leaderboard-prominent:last-child").count(), 1);
+  assert.equal(await page.locator("main").evaluate(main => main.lastElementChild?.classList.contains("global-leaderboard")), true);
 
   for (const key of ["ArrowLeft","ArrowDown","ArrowRight","ArrowUp","ArrowLeft","ArrowDown","ArrowRight","ArrowUp","ArrowLeft","ArrowDown","ArrowRight","ArrowUp"]) {
     await page.keyboard.press(key);
@@ -28,6 +28,11 @@ const assert = require("node:assert/strict");
   assert.match(createdNickname, /^匿名用户\d{5}$/);
   assert.equal(await page.locator(".global-player-dialog").count(), 0);
   assert.equal(await page.locator(".global-player-name").textContent(), createdNickname);
+  for (const path of ["/games/minesweeper/","/games/spider/","/games/racing/"]) {
+    await page.goto(`http://127.0.0.1:8766${path}`);
+    await page.waitForSelector(".global-leaderboard");
+    assert.equal(await page.locator("main").evaluate(main => main.lastElementChild?.classList.contains("global-leaderboard")), true, `${path} leaderboard should be last`);
+  }
   await browser.close();
-  console.log("leaderboard is prominent and first score creates an anonymous profile");
+  console.log("leaderboard is below the game and first score creates an anonymous profile");
 })().catch(error => { console.error(error); process.exit(1); });
