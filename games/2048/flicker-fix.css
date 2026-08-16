@@ -4,6 +4,29 @@
   contain: layout paint style;
 }
 
+/* Every value has its own hue so adjacent levels stay recognisable at a glance. */
+.tile[data-v="2"] { background: #fff4c7; color: #274c59; }
+.tile[data-v="4"] { background: #ffe08a; color: #4f3b00; }
+.tile[data-v="8"] { background: #ffc45f; color: #573300; }
+.tile[data-v="16"] { background: #ff9b52; color: #572100; }
+.tile[data-v="32"] { background: #ff766d; color: #561613; }
+.tile[data-v="64"] { background: #d9475f; color: #ffffff; }
+.tile[data-v="128"] { background: #9ce06f; color: #234414; }
+.tile[data-v="256"] { background: #42c894; color: #103f35; }
+.tile[data-v="512"] { background: #39afd0; color: #083845; }
+.tile[data-v="1024"] { background: #365fbf; color: #ffffff; }
+.tile[data-v="2048"] { background: #7654d8; color: #ffffff; }
+.tile[data-v="4096"] { background: #a33faf; color: #ffffff; }
+.tile[data-v="8192"] { background: #bd386e; color: #ffffff; }
+.tile[data-v="16384"] { background: #a92f38; color: #ffffff; }
+.tile[data-v="32768"] { background: #684057; color: #ffffff; }
+.tile[data-v="65536"] { background: #28334f; color: #ffffff; }
+.tile[data-v="4096"],
+.tile[data-v="8192"],
+.tile[data-v="16384"],
+.tile[data-v="32768"],
+.tile[data-v="65536"] { font-size: clamp(15px,5vw,32px); }
+
 @keyframes tile-pop-stable {
   0% { transform: scale(.58); }
   70% { transform: scale(1.1); }
