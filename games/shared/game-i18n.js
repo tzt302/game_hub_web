@@ -6,6 +6,7 @@
   const params=new URLSearchParams(location.search);
   const locale=normalize(params.get('lang')||localStorage.getItem('tzt-game-language')||navigator.language);
   window.__TZT_GAME_LOCALE=locale;
+  if(!document.querySelector('script[data-tzt-feedback]')){const feedback=document.createElement('script');feedback.src=new URL('./feedback.js',document.currentScript.src).href;feedback.dataset.tztFeedback='';document.head.append(feedback)}
   try{if(window.opener?.GAME_I18N_BOOTSTRAP===locale)window.opener.GAME_I18N_BOOTSTRAP=null;else window.opener?.GAME_I18N_BOOTSTRAP&&void 0}catch{}
   localStorage.setItem('tzt-game-language',locale);document.documentElement.lang=locale;document.documentElement.dir=locale==='ar'?'rtl':'ltr';
 
