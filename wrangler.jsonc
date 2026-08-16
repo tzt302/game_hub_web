@@ -12,7 +12,7 @@
     {
       "binding": "DB",
       "database_name": "tzt-game-leaderboard",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "5b4571ac-c97a-4720-9ee0-af0ef90326f4",
       "migrations_dir": "migrations"
     }
   ]
