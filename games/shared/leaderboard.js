@@ -1,5 +1,13 @@
 const PROFILE_KEY = "tzt-global-player-v1";
 
+if (!document.querySelector('link[data-global-leaderboard-prominent]')) {
+  const style = document.createElement("link");
+  style.rel = "stylesheet";
+  style.href = new URL("./leaderboard-prominent.css", import.meta.url).href;
+  style.dataset.globalLeaderboardProminent = "";
+  document.head.append(style);
+}
+
 const TEXT = {
   "zh": { global:"全球排行榜", empty:"还没有成绩，来拿下第一名吧", player:"玩家昵称", save:"保存昵称", cancel:"取消", rename:"设置昵称", loading:"正在读取全球排名…", offline:"全球榜暂时无法连接，本地记录不受影响", best:"新个人最佳！全球第 {rank} 名", kept:"成绩已提交，个人最佳仍是第 {rank} 名", submit:"提交成绩失败" },
   "zh-hant": { global:"全球排行榜", empty:"還沒有成績，來拿下第一名吧", player:"玩家暱稱", save:"儲存暱稱", cancel:"取消", rename:"設定暱稱", loading:"正在讀取全球排名…", offline:"全球榜暫時無法連線，本機紀錄不受影響", best:"新個人最佳！全球第 {rank} 名", kept:"成績已提交，個人最佳仍是第 {rank} 名", submit:"提交成績失敗" },
@@ -35,6 +43,11 @@ function saveProfile(profile) {
   return profile;
 }
 
+export function generateAnonymousNickname(random = Math.random) {
+  const suffix = Math.floor(Math.max(0, Math.min(.999999999, Number(random()))) * 90_000) + 10_000;
+  return `匿名用户${suffix}`;
+}
+
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, character => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[character]);
 }
@@ -66,7 +79,7 @@ function askNickname(current = "") {
   return new Promise(resolve => {
     const overlay = document.createElement("div");
     overlay.className = "global-player-dialog";
-    overlay.innerHTML = `<form><small>TZT PLAYER</small><h2>${t("player")}</h2><input maxlength="16" minlength="2" autocomplete="nickname" value="${escapeHtml(current)}" required><p>2–16 个字符；排行榜只公开昵称。</p><div><button type="button" data-cancel>${t("cancel")}</button><button type="submit">${t("save")}</button></div></form>`;
+    overlay.innerHTML = `<form><small>TZT PLAYER</small><h2>${t("player")}</h2><input maxlength="16" autocomplete="nickname" value="${escapeHtml(current)}" placeholder="${generateAnonymousNickname(() => .5)}"><p>2–16 个字符；留空将自动生成“匿名用户 + 5位数字”。</p><div><button type="button" data-cancel>${t("cancel")}</button><button type="submit">${t("save")}</button></div></form>`;
     document.body.append(overlay);
     const input = overlay.querySelector("input");
     input.focus(); input.select();
@@ -76,7 +89,7 @@ function askNickname(current = "") {
     overlay.querySelector("form").addEventListener("submit", event => {
       event.preventDefault();
       const value = input.value.trim();
-      if (value.length >= 2) close(value);
+      if (!value || value.length >= 2) close(value || generateAnonymousNickname());
     });
   });
 }
@@ -84,7 +97,7 @@ function askNickname(current = "") {
 async function ensureProfile(forceRename = false) {
   let profile = readProfile();
   if (profile && !forceRename) return profile;
-  const nickname = await askNickname(profile?.player?.nickname || "");
+  const nickname = !profile && !forceRename ? generateAnonymousNickname() : await askNickname(profile?.player?.nickname || "");
   if (!nickname) return null;
   if (profile) {
     try {
@@ -103,10 +116,12 @@ async function ensureProfile(forceRename = false) {
 export function initGlobalLeaderboard({ gameId, mode = "classic", title = "", formatValue = defaultValue, mount } = {}) {
   let currentMode = typeof mode === "function" ? mode() : mode;
   const host = document.createElement("section");
-  host.className = "global-leaderboard";
-  host.innerHTML = `<header><div><small>WORLD RANKING</small><h2>${escapeHtml(title || t("global"))}</h2></div><button type="button" class="global-player-name">${escapeHtml(readProfile()?.player?.nickname || t("rename"))}</button></header><p class="global-board-status">${t("loading")}</p><ol class="global-board-list"></ol>`;
+  host.className = "global-leaderboard global-leaderboard-prominent";
+  host.innerHTML = `<header><div><small>🏆 WORLD RANKING</small><h2>${escapeHtml(title || t("global"))}</h2></div><button type="button" class="global-player-name">${escapeHtml(readProfile()?.player?.nickname || t("rename"))}</button></header><p class="global-board-status">${t("loading")}</p><ol class="global-board-list"></ol>`;
   const target = mount ? document.querySelector(mount) : document.querySelector("main");
-  target?.append(host);
+  const topbar = target?.querySelector(":scope > header");
+  if (topbar) topbar.insertAdjacentElement("afterend", host);
+  else target?.prepend(host);
   const list = host.querySelector("ol");
   const status = host.querySelector(".global-board-status");
   const nameButton = host.querySelector(".global-player-name");

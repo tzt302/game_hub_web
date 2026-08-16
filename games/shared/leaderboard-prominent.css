@@ -1,0 +1,45 @@
+.global-leaderboard-prominent {
+  position: relative;
+  margin: 18px auto 22px;
+  border-color: #fff7c4;
+  outline: 3px solid #ffd75a;
+  outline-offset: -6px;
+  background: linear-gradient(135deg,#fffdf3,#edfff9);
+  box-shadow: 0 9px 0 #d1a82f,0 18px 30px rgba(8,99,107,.16);
+}
+
+.global-leaderboard-prominent h2 {
+  font-size: clamp(23px,4vw,31px);
+}
+
+.global-leaderboard-prominent .global-board-list {
+  max-height: 148px;
+  overflow-y: auto;
+  scrollbar-color: #ffd75a #e8f7f3;
+  scrollbar-width: thin;
+}
+
+.global-leaderboard-prominent .global-board-list li:nth-child(1) i {
+  background: #f2b91e;
+  color: #543b00;
+}
+
+.global-leaderboard-prominent .global-board-list li:nth-child(2) i {
+  background: #b7c7cf;
+  color: #233b45;
+}
+
+.global-leaderboard-prominent .global-board-list li:nth-child(3) i {
+  background: #c9824e;
+  color: #fff;
+}
+
+@media (max-width: 650px) {
+  .global-leaderboard-prominent {
+    margin: 15px auto 20px;
+  }
+
+  .global-leaderboard-prominent .global-board-list {
+    max-height: 174px;
+  }
+}
