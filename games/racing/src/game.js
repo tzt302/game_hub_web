@@ -78,7 +78,9 @@ function startConfiguredSession() {
   state.track = state.tracks[ui.track.value]; state.mode = ui.mode.value; state.difficulty = ui.difficulty.value;
   state.viewScale = Number(ui.view.value); state.livery = ui.livery.value; resetSession();
   worldBoard.setMode(`${state.mode}:${state.track.id}`);
-  ui.guide.classList.add('hidden'); ui.menu.classList.add('hidden'); ui.hud.classList.remove('hidden'); state.phase = 'race'; canvas.focus();
+  ui.guide.classList.add('hidden'); ui.menu.classList.add('hidden'); ui.hud.classList.remove('hidden'); state.phase = 'race';
+  canvas.focus({ preventScroll:true });
+  window.scrollTo({ top:0, left:0, behavior:'auto' });
 }
 
 $('#raceSetup').addEventListener('submit', event => { event.preventDefault(); state.track = state.tracks[ui.track.value]; ui.menu.classList.add('hidden'); ui.guide.classList.remove('hidden'); });

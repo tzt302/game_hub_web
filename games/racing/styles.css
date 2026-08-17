@@ -20,7 +20,7 @@ button { cursor: pointer; }
 .hidden { display: none !important; }
 .stage canvas,.touch-controls,.touch-controls button { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .stage canvas,.touch-controls button { touch-action: none; }
-.game-shell { min-height: 100vh; background: linear-gradient(145deg,#22d7cb,#5de6d5); }
+.game-shell { min-height: 100vh; min-height: 100dvh; background: linear-gradient(145deg,#22d7cb,#5de6d5); }
 .topbar { height: 66px; margin: 10px 14px 0; padding: 0 clamp(15px,3vw,38px); display: flex; align-items: center; justify-content: space-between; border: 3px solid rgba(255,255,255,.86); border-radius: 22px; background: rgba(249,255,253,.95); box-shadow: 0 7px 0 rgba(9,99,107,.15); position: relative; z-index: 30; }
 .back-link { padding: 9px 12px; color: var(--ink); border: 2px solid #d6eee9; border-radius: 12px; background: #edf9f6; box-shadow: 0 4px 0 #c4e4dd; text-decoration: none; font-size: 11px; font-weight: 900; }
 .back-link:hover { transform: translateY(-1px); background: #fff; }
@@ -111,8 +111,8 @@ button { cursor: pointer; }
 .recovery-countdown span { color: #fff; }
 @keyframes recovery-pulse { from { opacity: 0; transform: scale(1.6) rotate(-8deg); } to { opacity: 1; transform: none; } }
 @media(max-width:850px) {
-  .topbar { height: 56px; margin: 6px 7px 0; border-radius: 17px; }
-  .stage { width: calc(100% - 10px); height: calc(100svh - 67px); min-height: 540px; margin-top: 5px; border-radius: 20px 20px 0 0; }
+  .topbar { height: 56px; margin: max(6px,env(safe-area-inset-top)) 7px 0; border-radius: 17px; }
+  .stage { width: calc(100% - 10px); height: calc(100dvh - 67px - max(6px,env(safe-area-inset-top))); min-height: 540px; margin-top: 5px; border-radius: 20px 20px 0 0; }
   .menu-screen { grid-template-columns: 1fr; padding: 23px; overflow: auto; }
   .menu-screen::after { right: 5%; bottom: 40%; opacity: .3; }
   .menu-copy h1 { font-size: 57px; }
@@ -124,9 +124,45 @@ button { cursor: pointer; }
   .guide-grid { grid-template-columns: 1fr; }.guide-grid article { padding: 15px; }.guide-card { width: 100%; max-height: 92vh; padding: 23px; overflow: auto; }
 }
 @media(max-width:560px) {
-  .wordmark { font-size: 9px; }.version { display: none; }
-  .timing-tower { top: 8px; left: 8px; width: 145px; }.timing-tower header { padding: 6px; }.timing-tower li { padding: 3px; font-size: 8px; }
-  .lap-panel { top: 8px; min-width: 150px; padding: 6px; }.lap-panel span { font-size: 18px; }
-  .delta { top: 8px; right: 8px; width: 135px; padding: 6px; }.delta strong { font-size: 17px; }.delta small { font-size: 6px; }
-  .telemetry { padding: 7px 11px; }.speed strong { font-size: 31px; }.gear strong { font-size: 29px; }
+  .topbar { padding: 0 8px; }
+  .back-link { padding: 8px 9px; font-size: 9px; }
+  .wordmark,.version { display: none; }
+  .stage { min-height: 505px; }
+
+  /* Portrait HUD: one full-width lap card, then two compact side cards. */
+  .lap-panel { top: 8px; right: 8px; left: 8px; min-width: 0; padding: 5px 8px; transform: none; }
+  .lap-panel small { font-size: 7px; }
+  .lap-panel strong { margin: 2px; font-size: 10px; }
+  .lap-panel span { font-size: 20px; }
+  .timing-tower { top: 78px; left: 8px; width: 132px; }
+  .timing-tower header { padding: 6px 7px; }
+  .timing-tower li { grid-template-columns: 16px 1fr auto; gap: 4px; padding: 3px 4px; font-size: 8px; }
+  .timing-tower li:nth-child(n+4) { display: none; }
+  .delta { top: 78px; right: 8px; width: 124px; padding: 7px 8px; }
+  .delta strong { font-size: 17px; }
+  .delta small { font-size: 6px; line-height: 1.3; }
+  .notice { top: 142px; max-width: calc(100% - 30px); text-align: center; }
+  .start-lights { top: 146px; }
+
+  /* Driving information sits above the controls instead of on top of them. */
+  .hud-actions { bottom: calc(max(10px,env(safe-area-inset-bottom)) + 70px); left: 8px; gap: 5px; }
+  .hud-actions button { width: 53px; min-height: 42px; padding: 7px 5px; }
+  .telemetry { right: 8px; bottom: calc(max(10px,env(safe-area-inset-bottom)) + 70px); left: auto; gap: 8px; min-width: 136px; padding: 6px 9px; transform: none; }
+  .speed strong { font-size: 29px; }
+  .gear strong { font-size: 27px; }
+  .pedals { height: 32px; }
+
+  .touch-controls { right: 8px; bottom: max(10px,env(safe-area-inset-bottom)); left: 8px; align-items: end; }
+  .touch-controls>div { gap: 5px; }
+  .touch-controls button { width: 58px; height: 57px; border-radius: 15px; font-size: 8px; }
+  .touch-controls .reset { width: 45px; font-size: 7px; }
+  .touch-controls .brake,.touch-controls .throttle { width: 55px; }
+}
+
+@media(max-width:380px) {
+  .touch-controls button { width: 52px; }
+  .touch-controls .reset { width: 41px; }
+  .touch-controls .brake,.touch-controls .throttle { width: 50px; }
+  .telemetry { min-width: 128px; }
+  .hud-actions button { width: 49px; }
 }
